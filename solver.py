@@ -5,6 +5,39 @@ from datetime import datetime, timedelta
 
 TIME_GAP = 10  # Global constant (minutes)
 
+def backtrack(groups, rooms, room_schedules={}, index=0):
+    """Recursive backtracking function to assign groups to rooms."""
+    if index == len(groups):  # All groups assigned
+        return [{"GroupID": g['GroupID'], "RoomID": r, "Start": s.strftime("%H:%M"), "End": e.strftime("%H:%M")} 
+                for r, schedule in room_schedules.items() for s, e, g in schedule]
+    
+    group = groups[index]
+    
+    # Sort rooms based on best fit (smallest room that fits the group)
+    sorted_rooms = sorted(rooms, key=lambda r: int(r['Capacity']))
+    
+    for room in sorted_rooms:
+        if not check_floor_preference(group, room):
+            continue  # Skip if the floor preference is not met
+        
+        if is_valid_assignment(group, room, room_schedules):
+            if room['RoomID'] not in room_schedules:
+                room_schedules[room['RoomID']] = []
+            
+            room_schedules[room['RoomID']].append((
+                datetime.strptime(group['Start'], "%H:%M"), 
+                datetime.strptime(group['End'], "%H:%M"),
+                group
+            ))
+            
+            result = backtrack(groups, rooms, room_schedules, index + 1)
+            if result:  # If a valid assignment is found
+                return result  
+            
+            room_schedules[room['RoomID']].pop()  # Backtrack if no valid assignment found
+    
+    return []  # Return an empty list if no valid assignment is possible
+
 def check_time_overlap(group, room, room_schedules):
     """Checks if the group's time overlaps with any existing assignments in the same room."""
     group_start = datetime.strptime(group['Start'], "%H:%M")
@@ -46,36 +79,3 @@ def is_valid_assignment(group, room, room_schedules):
         check_equipment(group, room) and                # Equipment check
         check_time_overlap(group, room, room_schedules) # Room-specific Time check
     )
-
-def backtrack(groups, rooms, room_schedules={}, index=0):
-    """Recursive backtracking function to assign groups to rooms."""
-    if index == len(groups):  # All groups assigned
-        return [{"GroupID": g['GroupID'], "RoomID": r, "Start": s.strftime("%H:%M"), "End": e.strftime("%H:%M")} 
-                for r, schedule in room_schedules.items() for s, e, g in schedule]
-    
-    group = groups[index]
-    
-    # Sort rooms based on best fit (smallest room that fits the group)
-    sorted_rooms = sorted(rooms, key=lambda r: int(r['Capacity']))
-    
-    for room in sorted_rooms:
-        if not check_floor_preference(group, room):
-            continue  # Skip if the floor preference is not met
-        
-        if is_valid_assignment(group, room, room_schedules):
-            if room['RoomID'] not in room_schedules:
-                room_schedules[room['RoomID']] = []
-            
-            room_schedules[room['RoomID']].append((
-                datetime.strptime(group['Start'], "%H:%M"), 
-                datetime.strptime(group['End'], "%H:%M"),
-                group
-            ))
-            
-            result = backtrack(groups, rooms, room_schedules, index + 1)
-            if result:  # If a valid assignment is found
-                return result  
-            
-            room_schedules[room['RoomID']].pop()  # Backtrack if no valid assignment found
-    
-    return []  # Return an empty list if no valid assignment is possible
