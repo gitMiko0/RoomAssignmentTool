@@ -24,6 +24,15 @@ def backtrack(groups, rooms, room_schedules={}, index=0):
     
     return []
 
+def is_valid_assignment(group, room, room_schedules):
+    """Checks if a group can be assigned to a room while satisfying all constraints."""
+    return (
+        check_floor_preference(group, room) and         # 1. Floor preference check
+        check_room_capacity(group, room) and            # 2. Room capacity check
+        check_wheelchair_access(group, room) and        # 3. Wheelchair access check
+        check_equipment(group, room) and                # 4. Equipment check
+        check_time_overlap(group, room, room_schedules) # 5. Room-specific Time check, Only check when all other constraints are good!
+    )
 
 def check_time_overlap(group, room, room_schedules):
     """Checks if the group's time overlaps with any existing assignments in the same room."""
@@ -56,13 +65,3 @@ def check_wheelchair_access(group, room):
 def check_floor_preference(group, room):
     """Checks if the room satisfies the group's floor preference."""
     return group['FloorPreference'] == "-1" or int(group['FloorPreference']) == int(room['FloorLevel'])
-
-def is_valid_assignment(group, room, room_schedules):
-    """Checks if a group can be assigned to a room while satisfying all constraints."""
-    return (
-        check_floor_preference(group, room) and         # Floor preference check
-        check_room_capacity(group, room) and            # Room capacity check
-        check_wheelchair_access(group, room) and        # Wheelchair access check
-        check_equipment(group, room) and                # Equipment check
-        check_time_overlap(group, room, room_schedules) # Room-specific Time check
-    )
