@@ -6,37 +6,24 @@ from datetime import datetime, timedelta
 TIME_GAP = 10  # Global constant (minutes)
 
 def backtrack(groups, rooms, room_schedules={}, index=0):
-    """Recursive backtracking function to assign groups to rooms."""
-    if index == len(groups):  # All groups assigned
+    if index == len(groups):
         return [{"GroupID": g['GroupID'], "RoomID": r, "Start": s.strftime("%H:%M"), "End": e.strftime("%H:%M")} 
                 for r, schedule in room_schedules.items() for s, e, g in schedule]
     
     group = groups[index]
-    
-    # Sort rooms based on best fit (smallest room that fits the group)
-    sorted_rooms = sorted(rooms, key=lambda r: int(r['Capacity']))
-    
-    for room in sorted_rooms:
-        if not check_floor_preference(group, room):
-            continue  # Skip if the floor preference is not met
-        
+    for room in sorted(rooms, key=lambda r: int(r['Capacity'])):
         if is_valid_assignment(group, room, room_schedules):
-            if room['RoomID'] not in room_schedules:
-                room_schedules[room['RoomID']] = []
+            schedule = room_schedules.setdefault(room['RoomID'], [])
+            schedule.append((datetime.strptime(group['Start'], "%H:%M"), 
+                             datetime.strptime(group['End'], "%H:%M"), group))
             
-            room_schedules[room['RoomID']].append((
-                datetime.strptime(group['Start'], "%H:%M"), 
-                datetime.strptime(group['End'], "%H:%M"),
-                group
-            ))
+            if result := backtrack(groups, rooms, room_schedules, index + 1):
+                return result
             
-            result = backtrack(groups, rooms, room_schedules, index + 1)
-            if result:  # If a valid assignment is found
-                return result  
-            
-            room_schedules[room['RoomID']].pop()  # Backtrack if no valid assignment found
+            schedule.pop()
     
-    return []  # Return an empty list if no valid assignment is possible
+    return []
+
 
 def check_time_overlap(group, room, room_schedules):
     """Checks if the group's time overlaps with any existing assignments in the same room."""
