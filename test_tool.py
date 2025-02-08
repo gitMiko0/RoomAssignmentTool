@@ -1,118 +1,101 @@
-import pytest  # type: ignore
-from solver import backtrack, is_valid_assignment
+import pytest
+from datetime import datetime, timedelta
+from solver import (
+    backtrack, is_valid_assignment, check_floor_preference, check_room_capacity,
+    check_wheelchair_access, check_equipment, check_time_overlap
+)
 
-@pytest.fixture
-def sample_data_no_groups():
+# Sample test data
+def sample_group(start, end, size=5, wheelchair=False, projector=False, computer=False, floor=-1):
     return {
-        'groups': [],
-        'rooms': [
-            {'RoomID': 'R101', 'Capacity': '15', 'Computer': 'TRUE', 'FloorLevel': '1', 'Projector': 'TRUE', 'WheelchairAccess': 'TRUE'},
-            {'RoomID': 'R102', 'Capacity': '10', 'Computer': 'FALSE', 'FloorLevel': '2', 'Projector': 'FALSE', 'WheelchairAccess': 'FALSE'}
-        ]
+        "GroupID": "G1",
+        "Start": start,
+        "End": end,
+        "Size": str(size),
+        "WheelchairAccess": "TRUE" if wheelchair else "FALSE",
+        "Projector": "TRUE" if projector else "FALSE",
+        "Computer": "TRUE" if computer else "FALSE",
+        "FloorPreference": str(floor)
     }
 
-@pytest.fixture
-def sample_data_wheelchair_access():
+def sample_room(capacity=10, wheelchair=True, projector=True, computer=True, floor=1):
     return {
-        'groups': [
-            {'GroupID': 'G1', 'Size': '10', 'Start': '09:00', 'End': '10:00', 'WheelchairAccess': 'TRUE', 'Projector': 'FALSE', 'Computer': 'FALSE', 'FloorPreference': '-1'},
-            {'GroupID': 'G2', 'Size': '5', 'Start': '10:30', 'End': '11:30', 'WheelchairAccess': 'FALSE', 'Projector': 'TRUE', 'Computer': 'TRUE', 'FloorPreference': '-1'}
-        ],
-        'rooms': [
-            {'RoomID': 'R101', 'Capacity': '15', 'Computer': 'TRUE', 'FloorLevel': '1', 'Projector': 'TRUE', 'WheelchairAccess': 'TRUE'},
-            {'RoomID': 'R102', 'Capacity': '10', 'Computer': 'FALSE', 'FloorLevel': '2', 'Projector': 'FALSE', 'WheelchairAccess': 'FALSE'}
-        ]
+        "RoomID": "R1",
+        "Capacity": str(capacity),
+        "WheelchairAccess": "TRUE" if wheelchair else "FALSE",
+        "Projector": "TRUE" if projector else "FALSE",
+        "Computer": "TRUE" if computer else "FALSE",
+        "FloorLevel": str(floor)
     }
 
-@pytest.fixture
-def sample_data_capacity_check():
-    return {
-        'groups': [{'GroupID': 'G1', 'Size': '20', 'Start': '09:00', 'End': '10:00', 'WheelchairAccess': 'TRUE', 'Projector': 'FALSE', 'Computer': 'FALSE', 'FloorPreference': '-1'}],
-        'rooms': [{'RoomID': 'R101', 'Capacity': '15', 'Computer': 'TRUE', 'FloorLevel': '1', 'Projector': 'TRUE', 'WheelchairAccess': 'TRUE'}]
-    }
+# Unit tests for constraint functions
+def test_check_floor_preference():
+    assert check_floor_preference(sample_group("10:00", "11:00", floor=-1), sample_room(floor=2)) is True
+    assert check_floor_preference(sample_group("10:00", "11:00", floor=2), sample_room(floor=2)) is True
+    assert check_floor_preference(sample_group("10:00", "11:00", floor=3), sample_room(floor=2)) is False
 
-@pytest.fixture
-def sample_data_floor_preference():
-    return {
-        'groups': [{'GroupID': 'G1', 'Size': '10', 'Start': '09:00', 'End': '10:00', 'WheelchairAccess': 'TRUE', 'Projector': 'FALSE', 'Computer': 'FALSE', 'FloorPreference': '2'}],
-        'rooms': [
-            {'RoomID': 'R101', 'Capacity': '15', 'Computer': 'TRUE', 'FloorLevel': '1', 'Projector': 'TRUE', 'WheelchairAccess': 'TRUE'},
-            {'RoomID': 'R102', 'Capacity': '10', 'Computer': 'TRUE', 'FloorLevel': '2', 'Projector': 'TRUE', 'WheelchairAccess': 'TRUE'}
-        ]
-    }
+def test_check_room_capacity():
+    assert check_room_capacity(sample_group("10:00", "11:00", size=10), sample_room(capacity=10)) is True
+    assert check_room_capacity(sample_group("10:00", "11:00", size=11), sample_room(capacity=10)) is False
+    assert check_room_capacity(sample_group("10:00", "11:00", size=9), sample_room(capacity=10)) is True
 
-@pytest.fixture
-def sample_data_no_rooms():
-    return {
-        'groups': [
-            {'GroupID': 'G1', 'Size': '10', 'Start': '09:00', 'End': '10:00', 'WheelchairAccess': 'TRUE', 'Projector': 'FALSE', 'Computer': 'FALSE', 'FloorPreference': '-1'}
-        ],
-        'rooms': []
-    }
+def test_check_wheelchair_access():
+    assert check_wheelchair_access(sample_group("10:00", "11:00", wheelchair=True), sample_room(wheelchair=True)) is True
+    assert check_wheelchair_access(sample_group("10:00", "11:00", wheelchair=True), sample_room(wheelchair=False)) is False
 
-@pytest.fixture
-def sample_data_room_capacity_check():
-    return {
-        'groups': [
-            {'GroupID': 'G1', 'Size': '30', 'Start': '09:00', 'End': '10:00', 'WheelchairAccess': 'TRUE', 'Projector': 'FALSE', 'Computer': 'FALSE', 'FloorPreference': '-1'}
-        ],
-        'rooms': [
-            {'RoomID': 'R101', 'Capacity': '15', 'Computer': 'TRUE', 'FloorLevel': '1', 'Projector': 'TRUE', 'WheelchairAccess': 'TRUE'}
-        ]
-    }
+def test_check_equipment():
+    assert check_equipment(sample_group("10:00", "11:00", projector=True, computer=True), sample_room(projector=True, computer=True)) is True
+    assert check_equipment(sample_group("10:00", "11:00", projector=True, computer=False), sample_room(projector=False, computer=True)) is False
 
-@pytest.fixture
-def sample_data_floor_preference_check():
-    return {
-        'groups': [
-            {'GroupID': 'G1', 'Size': '15', 'Start': '09:00', 'End': '10:00', 'WheelchairAccess': 'FALSE', 'Projector': 'FALSE', 'Computer': 'FALSE', 'FloorPreference': '2'}
-        ],
-        'rooms': [
-            {'RoomID': 'R102', 'Capacity': '15', 'Computer': 'TRUE', 'FloorLevel': '1', 'Projector': 'TRUE', 'WheelchairAccess': 'TRUE'},
-            {'RoomID': 'R102', 'Capacity': '15', 'Computer': 'TRUE', 'FloorLevel': '2', 'Projector': 'TRUE', 'WheelchairAccess': 'TRUE'}
-        ]
-    }
+def test_check_time_overlap():
+    """Test that check_time_overlap correctly prevents bookings within the TIME_GAP buffer."""
+    
+    global TIME_GAP
+    TIME_GAP = 10  # Ensure global variable is set
 
-def test_no_groups(sample_data_no_groups):
-    assignments = backtrack(sample_data_no_groups['groups'], sample_data_no_groups['rooms'])
-    assert assignments == [], "There should be no assignments when there are no groups."
+    # Existing room schedule: Booking from 10:00 AM to 11:00 AM
+    room_schedules = {"R1": [(datetime(2023, 1, 1, 10, 0), datetime(2023, 1, 1, 11, 0), None)]}
 
-def test_wheelchair_access(sample_data_wheelchair_access):
-    assignments = backtrack(sample_data_wheelchair_access['groups'], sample_data_wheelchair_access['rooms'])
-    assert len(assignments) == 2, "Both groups should be assigned to rooms."
-    assert assignments[0]['RoomID'] == 'R101', "Group G1 should be assigned to a room with wheelchair access (R101)."
-    assert assignments[1]['RoomID'] == 'R101', "Group G1 should be assigned to R101 which is now free."
+    # ✅ Valid cases: Starts at 11:10 AM (respects the 10-minute gap)
+    assert check_time_overlap(sample_group("11:10", "12:00"), sample_room(), room_schedules) is True
+    assert check_time_overlap(sample_group("08:10", "09:50"), sample_room(), room_schedules) is True
+    # ❌ Invalid case: Starts at 10:30 AM, should be rejected due to overlap
+    assert check_time_overlap(sample_group("10:30", "11:30"), sample_room(), room_schedules) is False
 
-def test_capacity_check(sample_data_capacity_check):
-    assignments = backtrack(sample_data_capacity_check['groups'], sample_data_capacity_check['rooms'])
-    assert assignments == [], "Group G1 should not be assigned to R101 due to capacity issue."
+    # ❌ Invalid case: Starts exactly at 11:00 AM (should be rejected due to buffer)
+    assert check_time_overlap(sample_group("11:00", "12:00"), sample_room(), room_schedules) is False
 
-def test_no_rooms(sample_data_no_rooms):
-    assignments = backtrack(sample_data_no_rooms['groups'], sample_data_no_rooms['rooms'])
-    assert assignments == [], "There should be no assignments when there are no rooms."
+    # ❌ Invalid case: Fully inside existing booking (10:15 - 10:45)
+    assert check_time_overlap(sample_group("10:15", "10:45"), sample_room(), room_schedules) is False
 
-def test_room_capacity_check(sample_data_room_capacity_check):
-    assignments = backtrack(sample_data_room_capacity_check['groups'], sample_data_room_capacity_check['rooms'])
-    assert assignments == [], "Group G1 should not be assigned to R101 due to capacity issue."
+    # ❌ Invalid case: Starts before and ends after (9:50 - 11:10) - should be rejected
+    assert check_time_overlap(sample_group("09:50", "11:10"), sample_room(), room_schedules) is False
 
+# Unit test for is_valid_assignment
+def test_is_valid_assignment():
+    room_schedules = {}
+    assert is_valid_assignment(sample_group("10:00", "11:00"), sample_room(), room_schedules) is True
+    assert is_valid_assignment(sample_group("10:00", "11:00", size=15), sample_room(capacity=10), room_schedules) is False  # Capacity
 
-def test_no_possible_assignment():
-    impossible_data = {
-        'groups': [
-            {'GroupID': 'G1', 'Start': '09:00', 'End': '10:00', 'Size': '30', 'Projector': 'TRUE', 'Computer': 'TRUE', 'WheelchairAccess': 'TRUE', 'FloorPreference': '1'},
-            {'GroupID': 'G2', 'Start': '10:05', 'End': '11:05', 'Size': '25', 'Projector': 'TRUE', 'Computer': 'TRUE', 'WheelchairAccess': 'TRUE', 'FloorPreference': '1'}
-        ],
-        'rooms': [
-            {'RoomID': 'R101', 'Capacity': '20', 'Projector': 'TRUE', 'Computer': 'TRUE', 'WheelchairAccess': 'TRUE', 'FloorLevel': '1'}
-        ]
-    }
+# Integration tests for backtrack
+def test_backtrack_simple_case():
+    groups = [sample_group("10:00", "11:00")]
+    rooms = [sample_room()]
+    result = backtrack(groups, rooms)
+    assert len(result) == 1
+    assert result[0]["RoomID"] == "R1"
 
-    # Run the backtracking algorithm
-    result = backtrack(impossible_data['groups'], impossible_data['rooms'])
+def test_backtrack_conflict():
+    groups = [sample_group("10:00", "11:00"), sample_group("10:30", "11:30")]
+    rooms = [sample_room()]
+    result = backtrack(groups, rooms)
+    assert len(result) == 1  # Only one group should be assigned
 
-    # Since no assignment is possible, the result should be an empty list
-    assert result == [], "Expected an empty assignment list when no valid solution exists."
+def test_backtrack_multiple_rooms():
+    groups = [sample_group("10:00", "11:00"), sample_group("10:30", "11:30")]
+    rooms = [sample_room(room_id="R1"), sample_room(room_id="R2")]
+    result = backtrack(groups, rooms)
+    assert len(result) == 2  # Both should be assigned, different rooms
 
-def test_floor_preference_check(sample_data_floor_preference_check):
-    assignments = backtrack(sample_data_floor_preference_check['groups'], sample_data_floor_preference_check['rooms'])
-    assert assignments[0]['RoomID'] == 'R101', "Group G1 should be assigned to R101 on floor 1."
+if __name__ == "__main__":
+    pytest.main()

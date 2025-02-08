@@ -34,20 +34,37 @@ def is_valid_assignment(group, room, room_schedules):
         check_time_overlap(group, room, room_schedules) # 5. Room-specific Time check, Only check when all other constraints are good!
     )
 
+from datetime import datetime, timedelta
+
+from datetime import datetime, timedelta
+
+from datetime import datetime, timedelta
+
 def check_time_overlap(group, room, room_schedules):
-    """Checks if the group's time overlaps with any existing assignments in the same room."""
-    group_start = datetime.strptime(group['Start'], "%H:%M")
-    group_end = datetime.strptime(group['End'], "%H:%M")
+    room_id = room["RoomID"]
     
-    if room['RoomID'] not in room_schedules:
-        return True  # No conflicts if no prior assignments in the room
+    if room_id not in room_schedules:
+        print(f"Room {room_id} is empty, allowing booking for {group['Start']} - {group['End']}")
+        return True
+
+    new_start = datetime.strptime(group["Start"], "%H:%M")
+    new_end = datetime.strptime(group["End"], "%H:%M")
     
-    for assigned_start, assigned_end, _ in room_schedules[room['RoomID']]:  # Fixed unpacking issue
-        if not (group_start >= assigned_end + timedelta(minutes=TIME_GAP) or 
-                group_end <= assigned_start - timedelta(minutes=TIME_GAP)):
-            return False  # Overlap detected
+    BUFFER = timedelta(minutes=TIME_GAP)
+
+    print(f"Checking {room_id} for overlap with {group['Start']} - {group['End']}")
+    for booked_start, booked_end, _ in room_schedules[room_id]:
+        adjusted_start = (booked_start - BUFFER).time()
+        adjusted_end = (booked_end + BUFFER).time()
+
+        print(f"Existing: {booked_start.strftime('%H:%M')} - {booked_end.strftime('%H:%M')}, Adjusted: {adjusted_start.strftime('%H:%M')} - {adjusted_end.strftime('%H:%M')}")
+
+        if (new_start.time() < adjusted_end and new_end.time() > adjusted_start):
+            print("❌ Conflict detected! Rejecting booking.")
+            return False
     
-    return True  # No overlap
+    print("✅ No conflict, booking allowed.")
+    return True
 
 def check_equipment(group, room):
     """Checks if the room satisfies the group's projector and computer needs."""
