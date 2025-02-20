@@ -56,19 +56,19 @@ def test_check_time_overlap():
     # Existing room schedule: Booking from 10:00 AM to 11:00 AM
     room_schedules = {"R1": [(datetime(2023, 1, 1, 10, 0), datetime(2023, 1, 1, 11, 0), None)]}
 
-    # ✅ Valid cases: Starts at 11:10 AM (respects the 10-minute gap)
+    # Valid cases: Starts at 11:10 AM (respects the 10-minute gap)
     assert check_time_overlap(sample_group("11:10", "12:00"), sample_room(), room_schedules) is True
     assert check_time_overlap(sample_group("08:10", "09:50"), sample_room(), room_schedules) is True
-    # ❌ Invalid case: Starts at 10:30 AM, should be rejected due to overlap
+    # Invalid case: Starts at 10:30 AM, should be rejected due to overlap
     assert check_time_overlap(sample_group("10:30", "11:30"), sample_room(), room_schedules) is False
 
-    # ❌ Invalid case: Starts exactly at 11:00 AM (should be rejected due to buffer)
+    # Invalid case: Starts exactly at 11:00 AM (should be rejected due to buffer)
     assert check_time_overlap(sample_group("11:00", "12:00"), sample_room(), room_schedules) is False
 
-    # ❌ Invalid case: Fully inside existing booking (10:15 - 10:45)
+    # Invalid case: Fully inside existing booking (10:15 - 10:45)
     assert check_time_overlap(sample_group("10:15", "10:45"), sample_room(), room_schedules) is False
 
-    # ❌ Invalid case: Starts before and ends after (9:50 - 11:10) - should be rejected
+    # Invalid case: Starts before and ends after (9:50 - 11:10) - should be rejected
     assert check_time_overlap(sample_group("09:50", "11:10"), sample_room(), room_schedules) is False
 
 # Unit test for is_valid_assignment

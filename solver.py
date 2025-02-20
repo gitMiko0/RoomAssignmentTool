@@ -11,11 +11,13 @@ def backtrack(groups, rooms, room_schedules={}, index=0):
                 for r, schedule in room_schedules.items() for s, e, g in schedule]
     
     group = groups[index]
+    
     for room in sorted(rooms, key=lambda r: int(r['Capacity'])):
         if is_valid_assignment(group, room, room_schedules):
             schedule = room_schedules.setdefault(room['RoomID'], [])
-            schedule.append((datetime.strptime(group['Start'], "%H:%M"), 
-                             datetime.strptime(group['End'], "%H:%M"), group))
+            schedule.append((datetime.strptime(group['Start'], "%Y-%m-%d %H:%M"), 
+                 datetime.strptime(group['End'], "%Y-%m-%d %H:%M"), group))
+
             
             if result := backtrack(groups, rooms, room_schedules, index + 1):
                 return result
@@ -34,12 +36,6 @@ def is_valid_assignment(group, room, room_schedules):
         check_time_overlap(group, room, room_schedules) # 5. Room-specific Time check, Only check when all other constraints are good!
     )
 
-from datetime import datetime, timedelta
-
-from datetime import datetime, timedelta
-
-from datetime import datetime, timedelta
-
 def check_time_overlap(group, room, room_schedules):
     room_id = room["RoomID"]
     
@@ -47,24 +43,27 @@ def check_time_overlap(group, room, room_schedules):
         print(f"Room {room_id} is empty, allowing booking for {group['Start']} - {group['End']}")
         return True
 
-    new_start = datetime.strptime(group["Start"], "%H:%M")
-    new_end = datetime.strptime(group["End"], "%H:%M")
+    new_start = datetime.strptime(group["Start"], "%Y-%m-%d %H:%M")
+    new_end = datetime.strptime(group["End"], "%Y-%m-%d %H:%M")
+
     
     BUFFER = timedelta(minutes=TIME_GAP)
 
     print(f"Checking {room_id} for overlap with {group['Start']} - {group['End']}")
+    
     for booked_start, booked_end, _ in room_schedules[room_id]:
-        adjusted_start = (booked_start - BUFFER).time()
-        adjusted_end = (booked_end + BUFFER).time()
+        adjusted_start = booked_start - BUFFER
+        adjusted_end = booked_end + BUFFER
 
-        print(f"Existing: {booked_start.strftime('%H:%M')} - {booked_end.strftime('%H:%M')}, Adjusted: {adjusted_start.strftime('%H:%M')} - {adjusted_end.strftime('%H:%M')}")
+        print(f"Existing: {booked_start.strftime('%Y-%m-%d %H:%M')} - {booked_end.strftime('%Y-%m-%d %H:%M')}, Adjusted: {adjusted_start.strftime('%Y-%m-%d %H:%M')} - {adjusted_end.strftime('%Y-%m-%d %H:%M')}")
 
-        if (new_start.time() < adjusted_end and new_end.time() > adjusted_start):
-            print("❌ Conflict detected! Rejecting booking.")
+        if new_start < adjusted_end and new_end > adjusted_start:
+            print("Conflict detected! Rejecting booking.")
             return False
     
-    print("✅ No conflict, booking allowed.")
+    print("No conflict, booking allowed.")
     return True
+
 
 def check_equipment(group, room):
     """Checks if the room satisfies the group's projector and computer needs."""
