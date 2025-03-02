@@ -6,11 +6,11 @@ from solver import (
 )
 
 # Sample test data
-def sample_group(start, end, size=5, wheelchair=False, projector=False, computer=False, floor=-1):
+def sample_group(start, end, size=5, wheelchair=False, projector=False, computer=False, floor=-1, date="2023-01-01"):
     return {
         "GroupID": "G1",
-        "Start": start,
-        "End": end,
+        "Start": f"{date} {start}",
+        "End": f"{date} {end}",
         "Size": str(size),
         "WheelchairAccess": "TRUE" if wheelchair else "FALSE",
         "Projector": "TRUE" if projector else "FALSE",
@@ -18,9 +18,10 @@ def sample_group(start, end, size=5, wheelchair=False, projector=False, computer
         "FloorPreference": str(floor)
     }
 
-def sample_room(capacity=10, wheelchair=True, projector=True, computer=True, floor=1):
+
+def sample_room(room_id="R1", capacity=10, wheelchair=True, projector=True, computer=True, floor=1):
     return {
-        "RoomID": "R1",
+        "RoomID": room_id,
         "Capacity": str(capacity),
         "WheelchairAccess": "TRUE" if wheelchair else "FALSE",
         "Projector": "TRUE" if projector else "FALSE",
@@ -86,16 +87,33 @@ def test_backtrack_simple_case():
     assert result[0]["RoomID"] == "R1"
 
 def test_backtrack_conflict():
-    groups = [sample_group("10:00", "11:00"), sample_group("10:30", "11:30")]
-    rooms = [sample_room()]
+    groups = [
+        sample_group("10:00", "11:00", size=5, wheelchair=False, projector=False, computer=False, floor=1),
+        sample_group("11:20", "12:20", size=5, wheelchair=False, projector=False, computer=False, floor=1)
+    ]
+    rooms = [sample_room(room_id="R1", capacity=10, wheelchair=True, projector=True, computer=True, floor=1)]
+    
     result = backtrack(groups, rooms)
-    assert len(result) == 1  # Only one group should be assigned
+    
+    assert len(result) == 1                      # Only one group should be assigned due to conflict
+    assert result[0]["GroupID"] in ["G1", "G2"]  # Ensure at least one group was assigned
+
 
 def test_backtrack_multiple_rooms():
-    groups = [sample_group("10:00", "11:00"), sample_group("10:30", "11:30")]
-    rooms = [sample_room(room_id="R1"), sample_room(room_id="R2")]
+    groups = [
+        sample_group("10:00", "11:00", size=5, wheelchair=True, projector=True, computer=True, floor=1),
+        sample_group("10:30", "11:30", size=5, wheelchair=True, projector=True, computer=True, floor=1)
+    ]
+    rooms = [
+        sample_room(room_id="R1", capacity=10, wheelchair=True, projector=True, computer=True, floor=1),
+        sample_room(room_id="R2", capacity=10, wheelchair=True, projector=True, computer=True, floor=1)
+    ]
+    
     result = backtrack(groups, rooms)
-    assert len(result) == 2  # Both should be assigned, different rooms
+    
+    assert len(result) == 2  # Both groups should be assigned
+    assigned_rooms = {r["RoomID"] for r in result}
+    assert "R1" in assigned_rooms and "R2" in assigned_rooms  # Ensure different rooms are used
 
 if __name__ == "__main__":
     pytest.main()

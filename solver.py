@@ -5,25 +5,41 @@ from datetime import datetime, timedelta
 
 TIME_GAP = 10  # Global constant (minutes)
 
-def backtrack(groups, rooms, room_schedules={}, index=0):
-    if index == len(groups):
-        return [{"GroupID": g['GroupID'], "RoomID": r, "Start": s.strftime("%H:%M"), "End": e.strftime("%H:%M")} 
-                for r, schedule in room_schedules.items() for s, e, g in schedule]
+def backtrack(groups, rooms, room_schedules=None, index=0):
+    if room_schedules is None:
+        room_schedules = {}  # Avoid mutable default argument issue
     
+    if index == len(groups):
+        return [{"GroupID": g['GroupID'], "RoomID": r, "Start": s.strftime("%H:%M"), "End": e.strftime("%H:%M")}
+                for r, schedule in room_schedules.items() for s, e, g in schedule]
+
     group = groups[index]
     
     for room in sorted(rooms, key=lambda r: int(r['Capacity'])):
         if is_valid_assignment(group, room, room_schedules):
-            schedule = room_schedules.setdefault(room['RoomID'], [])
-            schedule.append((datetime.strptime(group['Start'], "%Y-%m-%d %H:%M"), 
-                 datetime.strptime(group['End'], "%Y-%m-%d %H:%M"), group))
+            # Copy the room schedule before modification
+            if room['RoomID'] not in room_schedules:
+                room_schedules[room['RoomID']] = []
 
+            # Convert times properly
+            start_time = datetime.strptime(group['Start'], "%Y-%m-%d %H:%M")
+            end_time = datetime.strptime(group['End'], "%Y-%m-%d %H:%M")
             
-            if result := backtrack(groups, rooms, room_schedules, index + 1):
+            # Assign group
+            room_schedules[room['RoomID']].append((start_time, end_time, group))
+            
+            # Debugging output
+            print(f"Assigned {group['GroupID']} to {room['RoomID']} at {group['Start']} - {group['End']}")
+
+            # Recurse with updated schedules
+            result = backtrack(groups, rooms, room_schedules, index + 1)
+            if result:
                 return result
-            
-            schedule.pop()
-    
+
+            # Undo assignment if backtracking
+            room_schedules[room['RoomID']].pop()
+            print(f"Backtracking: Removed {group['GroupID']} from {room['RoomID']}")
+
     return []
 
 def is_valid_assignment(group, room, room_schedules):
