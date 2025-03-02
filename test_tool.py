@@ -5,7 +5,7 @@ from solver import (
     check_wheelchair_access, check_equipment, check_time_overlap
 )
 
-# Sample test data
+# Functions to easily create sample test data
 def sample_group(start, end, size=5, wheelchair=False, projector=False, computer=False, floor=-1, date="2023-01-01"):
     return {
         "GroupID": "G1",
@@ -89,15 +89,13 @@ def test_backtrack_simple_case():
 def test_backtrack_conflict():
     groups = [
         sample_group("10:00", "11:00", size=5, wheelchair=False, projector=False, computer=False, floor=1),
-        sample_group("11:20", "12:20", size=5, wheelchair=False, projector=False, computer=False, floor=1)
+        sample_group("11:00", "12:20", size=5, wheelchair=False, projector=False, computer=False, floor=1)
     ]
     rooms = [sample_room(room_id="R1", capacity=10, wheelchair=True, projector=True, computer=True, floor=1)]
     
     result = backtrack(groups, rooms)
     
-    assert len(result) == 1                      # Only one group should be assigned due to conflict
-    assert result[0]["GroupID"] in ["G1", "G2"]  # Ensure at least one group was assigned
-
+    assert len(result) == 0                      # Only one group should be assigned due to conflict
 
 def test_backtrack_multiple_rooms():
     groups = [

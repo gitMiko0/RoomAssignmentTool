@@ -1,7 +1,7 @@
 import csv
 from datetime import datetime
 
-# Change this to the actual date you want to append
+# Change this to the actual date to append
 DEFAULT_DATE = "2025-02-07"
 
 def update_csv(input_file, output_file):
@@ -22,7 +22,7 @@ def update_csv(input_file, output_file):
     print(f"Updated CSV saved as {output_file}")
 
 import os
-input_path = os.path.join("input", "groups_50.csv")
-output_path = os.path.join("input", "groups_50_updated.csv")
+input_path = os.path.join("groups2.csv")
+output_path = os.path.join("groups2_new.csv")
 update_csv(input_path, output_path)
 
