@@ -1,12 +1,12 @@
 import sys
 from input_reader import read_csv, load_input_data
-from solver import backtrack
+from solver import assign_groups
 from output_writer import write_output
 
 # To use this tool, input python room_assign_tool.py <dir of roomsInput.csv>  <dir of groupsInput.csv> in the terminal (while in the project directory)
 def main():
     rooms, groups = load_input_data()
-    assignments = backtrack(groups, rooms, {})
+    assignments = assign_groups(groups, rooms, {})
 
     if assignments:     # Solution found
         print("\nAssignments:")

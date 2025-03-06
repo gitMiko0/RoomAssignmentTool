@@ -5,9 +5,21 @@ from datetime import datetime, timedelta
 
 TIME_GAP = 10  # Global constant (minutes)
 
-def backtrack(groups, rooms, room_schedules=None, index=0):
+def assign_groups(groups, rooms, room_schedules=None, index=0):
+    """
+    Recursively assigns groups to rooms using backtracking to find a valid schedule.
+    
+    Parameters:
+        groups (list): List of group dictionaries containing scheduling information.
+        rooms (list): List of room dictionaries containing capacity and equipment details.
+        room_schedules (dict): Tracks current room assignments.
+        index (int): Current group index being processed.
+    
+    Returns:
+        list: A list of valid room assignments if successful, otherwise an empty list.
+    """
     if room_schedules is None:
-        room_schedules = {}  # Avoid mutable default argument issue
+        room_schedules = {}
     
     if index == len(groups):
         return [{"GroupID": g['GroupID'], "RoomID": r, "Start": s.strftime("%H:%M"), "End": e.strftime("%H:%M")}
@@ -17,42 +29,56 @@ def backtrack(groups, rooms, room_schedules=None, index=0):
     
     for room in sorted(rooms, key=lambda r: int(r['Capacity'])):
         if is_valid_assignment(group, room, room_schedules):
-            # Copy the room schedule before modification
             if room['RoomID'] not in room_schedules:
                 room_schedules[room['RoomID']] = []
 
-            # Convert times properly
             start_time = datetime.strptime(group['Start'], "%Y-%m-%d %H:%M")
             end_time = datetime.strptime(group['End'], "%Y-%m-%d %H:%M")
             
-            # Assign group
             room_schedules[room['RoomID']].append((start_time, end_time, group))
-            
-            # Debugging output
             print(f"Assigned {group['GroupID']} to {room['RoomID']} at {group['Start']} - {group['End']}")
 
-            # Recurse with updated schedules
-            result = backtrack(groups, rooms, room_schedules, index + 1)
+            result = assign_groups(groups, rooms, room_schedules, index + 1)
             if result:
                 return result
 
-            # Undo assignment if backtracking
             room_schedules[room['RoomID']].pop()
             print(f"Backtracking: Removed {group['GroupID']} from {room['RoomID']}")
 
     return []
 
 def is_valid_assignment(group, room, room_schedules):
-    """Checks if a group can be assigned to a room while satisfying all constraints."""
+    """
+    Checks if assigning a group to a room meets all constraints.
+    
+    Parameters:
+        group (dict): The group attempting to book a room.
+        room (dict): The room being considered.
+        room_schedules (dict): Existing room assignments.
+    
+    Returns:
+        bool: True if the room satisfies all constraints, otherwise False.
+    """
     return (
-        check_floor_preference(group, room) and         # 1. Floor preference check
-        check_room_capacity(group, room) and            # 2. Room capacity check
-        check_wheelchair_access(group, room) and        # 3. Wheelchair access check
-        check_equipment(group, room) and                # 4. Equipment check
-        check_time_overlap(group, room, room_schedules) # 5. Room-specific Time check, Only check when all other constraints are good!
+        check_floor_preference(group, room) and
+        check_room_capacity(group, room) and
+        check_wheelchair_access(group, room) and
+        check_equipment(group, room) and
+        check_time_overlap(group, room, room_schedules)
     )
 
 def check_time_overlap(group, room, room_schedules):
+    """
+    Ensures that a new booking does not overlap with existing bookings.
+    
+    Parameters:
+        group (dict): The group attempting to book a room.
+        room (dict): The room being checked.
+        room_schedules (dict): Existing room assignments.
+    
+    Returns:
+        bool: True if there is no scheduling conflict, otherwise False.
+    """
     room_id = room["RoomID"]
     
     if room_id not in room_schedules:
@@ -62,7 +88,6 @@ def check_time_overlap(group, room, room_schedules):
     new_start = datetime.strptime(group["Start"], "%Y-%m-%d %H:%M")
     new_end = datetime.strptime(group["End"], "%Y-%m-%d %H:%M")
 
-    
     BUFFER = timedelta(minutes=TIME_GAP)
 
     print(f"Checking {room_id} for overlap with {group['Start']} - {group['End']}")
@@ -80,20 +105,19 @@ def check_time_overlap(group, room, room_schedules):
     print("No conflict, booking allowed.")
     return True
 
-
 def check_equipment(group, room):
-    """Checks if the room satisfies the group's projector and computer needs."""
+    """Checks if the room meets the group's equipment requirements."""
     return (group['Projector'] == "FALSE" or room['Projector'] == "TRUE") and \
            (group['Computer'] == "FALSE" or room['Computer'] == "TRUE")
 
 def check_room_capacity(group, room):
-    """Checks if the room can accommodate the group's size."""
+    """Verifies if the room has enough capacity for the group size."""
     return int(group['Size']) <= int(room['Capacity'])
 
 def check_wheelchair_access(group, room):
-    """Checks if the group and room's wheelchair access are compatible."""
+    """Ensures that wheelchair accessibility requirements are met."""
     return group['WheelchairAccess'] == "FALSE" or room['WheelchairAccess'] == "TRUE"
 
 def check_floor_preference(group, room):
-    """Checks if the room satisfies the group's floor preference."""
+    """Confirms if the room is on the preferred floor."""
     return group['FloorPreference'] == "-1" or int(group['FloorPreference']) == int(room['FloorLevel'])

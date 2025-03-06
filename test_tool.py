@@ -1,7 +1,7 @@
 import pytest
 from datetime import datetime, timedelta
 from solver import (
-    backtrack, is_valid_assignment, check_floor_preference, check_room_capacity,
+    assign_groups, is_valid_assignment, check_floor_preference, check_room_capacity,
     check_wheelchair_access, check_equipment, check_time_overlap
 )
 
@@ -82,7 +82,7 @@ def test_is_valid_assignment():
 def test_backtrack_simple_case():
     groups = [sample_group("10:00", "11:00")]
     rooms = [sample_room()]
-    result = backtrack(groups, rooms)
+    result = assign_groups(groups, rooms)
     assert len(result) == 1
     assert result[0]["RoomID"] == "R1"
 
@@ -93,7 +93,7 @@ def test_backtrack_conflict():
     ]
     rooms = [sample_room(room_id="R1", capacity=10, wheelchair=True, projector=True, computer=True, floor=1)]
     
-    result = backtrack(groups, rooms)
+    result = assign_groups(groups, rooms)
     
     assert len(result) == 0                      # Only one group should be assigned due to conflict
 
@@ -107,7 +107,7 @@ def test_backtrack_multiple_rooms():
         sample_room(room_id="R2", capacity=10, wheelchair=True, projector=True, computer=True, floor=1)
     ]
     
-    result = backtrack(groups, rooms)
+    result = assign_groups(groups, rooms)
     
     assert len(result) == 2  # Both groups should be assigned
     assigned_rooms = {r["RoomID"] for r in result}
