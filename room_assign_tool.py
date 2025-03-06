@@ -1,11 +1,12 @@
 import sys
 from input_reader import read_csv, load_input_data
-from solver import assign_groups
+from solver import assign_groups, preprocess_data
 from output_writer import write_output
 
 # To use this tool, input python room_assign_tool.py <dir of roomsInput.csv>  <dir of groupsInput.csv> in the terminal (while in the project directory)
 def main():
     rooms, groups = load_input_data()
+    groups, rooms = preprocess_data(groups, rooms) # sorts groups by capacity request (asc), and converts string times to datetime objects if necessary
     assignments = assign_groups(groups, rooms, {})
 
     if assignments:     # Solution found

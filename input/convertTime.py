@@ -22,7 +22,7 @@ def update_csv(input_file, output_file):
     print(f"Updated CSV saved as {output_file}")
 
 import os
-input_path = os.path.join("groups2.csv")
-output_path = os.path.join("groups2_new.csv")
+input_path = os.path.join("error.csv")
+output_path = os.path.join("error_new.csv")
 update_csv(input_path, output_path)
 
