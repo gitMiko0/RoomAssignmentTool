@@ -8,15 +8,15 @@ class Group(TypedDict):
     End: datetime
     Size: str
     WheelchairAccess: Literal["TRUE", "FALSE"]
-    Projector: Literal["TRUE", "FALSE"]
-    Computer: Literal["TRUE", "FALSE"]
+    Projector:        Literal["TRUE", "FALSE"]
+    Computer:         Literal["TRUE", "FALSE"]
     FloorPreference: str
 
 class Room(TypedDict):
     RoomID: str
     Capacity: str
     WheelchairAccess: Literal["TRUE", "FALSE"]
-    Projector: Literal["TRUE", "FALSE"]
-    Computer: Literal["TRUE", "FALSE"]
+    Projector:        Literal["TRUE", "FALSE"]
+    Computer:         Literal["TRUE", "FALSE"]
     FloorLevel: str
     Schedule: List[Tuple[datetime, datetime, Group]]
