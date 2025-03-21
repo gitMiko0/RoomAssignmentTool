@@ -6,27 +6,32 @@ from solver import (
 )
 
 # Functions to easily create sample test data
-def sample_group(start, end, size=5, wheelchair=False, projector=False, computer=False, floor=-1, date="2023-01-01"):
+def bool_to_str(value: bool) -> str:
+    return "TRUE" if value else "FALSE"
+
+def sample_group(start, end, size=5, wheelchair=False, projector=False, computer=False, 
+                floor=-1, date="2023-01-01", group_id="G1"):
     return {
-        "GroupID": "G1",
-        "Start": datetime.strptime(f"{date} {start}", "%Y-%m-%d %H:%M"),
-        "End": datetime.strptime(f"{date} {end}", "%Y-%m-%d %H:%M"),
-        "Size": str(size),
-        "WheelchairAccess": "TRUE" if wheelchair else "FALSE",
-        "Projector": "TRUE" if projector else "FALSE",
-        "Computer": "TRUE" if computer else "FALSE",
-        "FloorPreference": str(floor)
+        "GroupID":          group_id, 
+        "Start":            datetime.strptime(f"{date} {start}", "%Y-%m-%d %H:%M"),
+        "End":              datetime.strptime(f"{date} {end}", "%Y-%m-%d %H:%M"),
+        "Size":             str(size),
+        "WheelchairAccess": bool_to_str(wheelchair),
+        "Projector":        bool_to_str(projector),
+        "Computer":         bool_to_str(computer),
+        "FloorPreference":  str(floor)
     }
+
 
 def sample_room(room_id="R1", capacity=10, wheelchair=True, projector=True, computer=True, floor=1):
     return {
-        "RoomID": room_id,
-        "Capacity": str(capacity),
-        "WheelchairAccess": "TRUE" if wheelchair else "FALSE",
-        "Projector": "TRUE" if projector else "FALSE",
-        "Computer": "TRUE" if computer else "FALSE",
-        "FloorLevel": str(floor),
-        "Schedule": []  # Added Schedule field
+        "RoomID":            room_id,
+        "Capacity":          str(capacity),
+        "WheelchairAccess":  bool_to_str(wheelchair), # to preserve string Format from CSV as functions expect
+        "Projector":         bool_to_str(projector),
+        "Computer":          bool_to_str(computer),
+        "FloorLevel":        str(floor),
+        "Schedule":          []
     }
 
 # Unit tests for constraint functions
