@@ -1,7 +1,7 @@
 from typing import TypedDict, Literal, List, Dict, Tuple
 from datetime import datetime
 
-# Data structure definitions
+
 class Group(TypedDict):
     GroupID: str
     Start: datetime
@@ -19,3 +19,4 @@ class Room(TypedDict):
     Projector: Literal["TRUE", "FALSE"]
     Computer: Literal["TRUE", "FALSE"]
     FloorLevel: str
+    Schedule: List[Tuple[datetime, datetime, Group]]

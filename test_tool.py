@@ -25,7 +25,8 @@ def sample_room(room_id="R1", capacity=10, wheelchair=True, projector=True, comp
         "WheelchairAccess": "TRUE" if wheelchair else "FALSE",
         "Projector": "TRUE" if projector else "FALSE",
         "Computer": "TRUE" if computer else "FALSE",
-        "FloorLevel": str(floor)
+        "FloorLevel": str(floor),
+        "Schedule": []  # Added Schedule field
     }
 
 # Unit tests for constraint functions
@@ -51,30 +52,28 @@ def test_check_time_overlap():
     global TIME_GAP
     TIME_GAP = 10  # Ensure global variable is set
 
-    # Existing room schedule: Booking from 10:00 AM to 11:00 AM
-    room_schedules = {"R1": [(datetime(2023, 1, 1, 10, 0), datetime(2023, 1, 1, 11, 0), None)]}
+    # Create room with existing booking
+    room = sample_room()
+    room['Schedule'] = [(datetime(2023, 1, 1, 10, 0), datetime(2023, 1, 1, 11, 0), None)]
 
-    # Valid cases: Starts at 11:10 AM (respects the 10-minute gap)
-    assert check_time_overlap(sample_group("11:10", "12:00"), sample_room(), room_schedules) is True
-    assert check_time_overlap(sample_group("08:10", "09:50"), sample_room(), room_schedules) is True
-    # Invalid case: Starts at 10:30 AM, should be rejected due to overlap
-    assert check_time_overlap(sample_group("10:30", "11:30"), sample_room(), room_schedules) is False
+    # Valid cases
+    assert check_time_overlap(sample_group("11:10", "12:00"), room) is True
+    assert check_time_overlap(sample_group("08:10", "09:50"), room) is True
+    
+    # Invalid cases
+    assert check_time_overlap(sample_group("10:30", "11:30"), room) is False
+    assert check_time_overlap(sample_group("11:00", "12:00"), room) is False
+    assert check_time_overlap(sample_group("10:15", "10:45"), room) is False
+    assert check_time_overlap(sample_group("09:50", "11:10"), room) is False
 
-    # Invalid case: Starts exactly at 11:00 AM (should be rejected due to buffer)
-    assert check_time_overlap(sample_group("11:00", "12:00"), sample_room(), room_schedules) is False
-
-    # Invalid case: Fully inside existing booking (10:15 - 10:45)
-    assert check_time_overlap(sample_group("10:15", "10:45"), sample_room(), room_schedules) is False
-
-    # Invalid case: Starts before and ends after (9:50 - 11:10) - should be rejected
-    assert check_time_overlap(sample_group("09:50", "11:10"), sample_room(), room_schedules) is False
-
-
-# Unit test for is_valid_assignment
 def test_is_valid_assignment():
-    room_schedules = {}
-    assert is_valid_assignment(sample_group("10:00", "11:00"), sample_room(), room_schedules) is True
-    assert is_valid_assignment(sample_group("10:00", "11:00", size=15), sample_room(capacity=10), room_schedules) is False  # Capacity
+    # Test valid assignment
+    room = sample_room()
+    room['Schedule'] = []
+    assert is_valid_assignment(sample_group("10:00", "11:00"), room) is True
+    
+    # Test capacity constraint
+    assert is_valid_assignment(sample_group("10:00", "11:00", size=15), sample_room(capacity=10)) is False
 
 def test_backtrack_simple_case():
     groups = [sample_group("10:00", "11:00")]

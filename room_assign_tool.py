@@ -7,7 +7,7 @@ from output_writer import write_output
 def main():
     rooms, groups = load_input_data()
     groups, rooms = preprocess_data(groups, rooms) # sorts groups by capacity request (asc), and converts string times to datetime objects if necessary
-    assignments = assign_groups(groups, rooms, {})
+    assignments = assign_groups(groups, rooms)
 
     if assignments:     # Solution found
         print("\nAssignments:")
