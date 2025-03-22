@@ -1,42 +1,51 @@
-from typing import List, Dict, Tuple
+from typing import TypedDict, List, Dict, Tuple
 from datetime import datetime, timedelta
 from data_structs import Group, Room
+TIME_GAP = 10  # In minutes. Valid schedules must have this minimum gap.
 
-TIME_GAP = 10  # minutes
-
+# ================= Core Logic =================
 def preprocess_data(
-    groups: List[Group],
-    rooms: List[Room]
+    raw_groups: List[Dict], 
+    raw_rooms: List[Dict]
 ) -> Tuple[List[Group], List[Room]]:
-    """
-    Prepares data for scheduling algorithm
-    - Initializes room schedules
-    - Converts string timestamps to datetime objects
-    - Sorts rooms by capacity
-    """
-    # Initialize schedules for all rooms
-    for room in rooms:
-        room['Schedule'] = []
-    
-    # Convert string times to datetime objects
-    for group in groups:
-        if isinstance(group['Start'], str):
-            group['Start'] = datetime.strptime(group['Start'], "%Y-%m-%d %H:%M")
-        if isinstance(group['End'], str):
-            group['End'] = datetime.strptime(group['End'], "%Y-%m-%d %H:%M")
-    
-    return groups, sorted(rooms, key=lambda r: int(r['Capacity']))
+    """Convert raw string data to properly typed structures, this is an efficiency choice
+        to avoid repeated conversions in the main algorithm as well as to have a place to sort
+        the rooms by capacity before the algorithm receives the data."""
+    groups = []
+    for rg in raw_groups:
+        group: Group = {
+            'GroupID':              rg['GroupID'],
+            'Start':                datetime.strptime(rg['Start'], "%Y-%m-%d %H:%M"),
+            'End':                  datetime.strptime(rg['End'], "%Y-%m-%d %H:%M"),
+            'Size':                 int(rg['Size']),
+            'WheelchairAccess':     rg['WheelchairAccess'].upper() == 'TRUE',
+            'Projector':            rg['Projector'].upper() == 'TRUE',
+            'Computer':             rg['Computer'].upper() == 'TRUE',
+            'FloorPreference':      int(rg['FloorPreference'])
+        }
+        groups.append(group)
+
+    rooms = []
+    for rr in raw_rooms:
+        room: Room = {
+            'RoomID': rr['RoomID'],
+            'Capacity': int(rr['Capacity']),
+            'WheelchairAccess': rr['WheelchairAccess'].upper() == 'TRUE',
+            'Projector': rr['Projector'].upper() == 'TRUE',
+            'Computer': rr['Computer'].upper() == 'TRUE',
+            'FloorLevel': int(rr['FloorLevel']),
+            'Schedule': []
+        }
+        rooms.append(room)
+
+    return groups, sorted(rooms, key=lambda r: r['Capacity'])
 
 def assign_groups(
     groups: List[Group],
     rooms: List[Room],
     index: int = 0
 ) -> List[Dict[str, str]]:
-    """
-    Backtracking scheduler with proper state management
-    - Uses room.Schedule for bookings
-    - Maintains original schedule during backtracking
-    """
+    """Backtracking scheduler with proper state management"""
     if index == len(groups):
         return format_output(rooms)
 
@@ -44,22 +53,22 @@ def assign_groups(
     
     for room in rooms:
         if is_valid_assignment(group, room):
-            # Save current state for potential backtracking
+            # Save state for backtracking
             original_schedule = room['Schedule'].copy()
             room['Schedule'].append((group['Start'], group['End'], group))
 
-            # Recursively assign remaining groups
             result = assign_groups(groups, rooms, index + 1)
             if result:
                 return result
 
-            # Backtrack if no solution found
+            # Restore original schedule
             room['Schedule'] = original_schedule
 
     return []
 
+# ================= Constraint Checks =================
 def is_valid_assignment(group: Group, room: Room) -> bool:
-    """Composite constraint checker with early exit"""
+    """Composite constraint check"""
     return all([
         check_floor_preference(group, room),
         check_room_capacity(group, room),
@@ -69,35 +78,45 @@ def is_valid_assignment(group: Group, room: Room) -> bool:
     ])
 
 def check_time_overlap(group: Group, room: Room) -> bool:
-    """Time conflict checker using room.Schedule"""
-    new_start, new_end = group['Start'], group['End']
+    """Check if group timing conflicts with existing room schedule (including buffer)"""
     buffer = timedelta(minutes=TIME_GAP)
+    new_start = group['Start']
+    new_end = group['End']
     
-    return not any(
-        new_start < (existing_end + buffer) and
-        new_end > (existing_start - buffer)
-        for existing_start, existing_end, _ in room['Schedule']
-    )
+    # Check against all existing bookings in the room
+    for existing_start, existing_end, _ in room['Schedule']:
+        # Apply buffer to existing booking's time range
+        existing_start_buffered = existing_start - buffer
+        existing_end_buffered = existing_end + buffer
+        
+        # Check if new booking overlaps with buffered existing booking
+        if (new_start < existing_end_buffered) and (new_end > existing_start_buffered):
+            return False  # Conflict found
+    
+    return True  # No conflicts found
+
 
 def check_equipment(group: Group, room: Room) -> bool:
-    """Equipment requirements validation"""
-    return (group['Projector'] in ["FALSE", room['Projector']]) and \
-           (group['Computer'] in ["FALSE", room['Computer']])
+    """Equipment requirements check"""
+    # Group only needs what it explicitly requires
+    return (not group['Projector'] or room['Projector']) and \
+           (not group['Computer'] or room['Computer'])
 
 def check_room_capacity(group: Group, room: Room) -> bool:
     """Capacity constraint check"""
-    return int(group['Size']) <= int(room['Capacity'])
+    return group['Size'] <= room['Capacity']
 
 def check_wheelchair_access(group: Group, room: Room) -> bool:
     """Accessibility requirement check"""
-    return group['WheelchairAccess'] == "FALSE" or room['WheelchairAccess'] == "TRUE"
+    return not group['WheelchairAccess'] or room['WheelchairAccess']
 
 def check_floor_preference(group: Group, room: Room) -> bool:
     """Floor preference validation"""
-    return group['FloorPreference'] == "-1" or int(group['FloorPreference']) == int(room['FloorLevel'])
+    return group['FloorPreference'] == -1 or group['FloorPreference'] == room['FloorLevel']
 
+# ================= Output Formatting =================
 def format_output(rooms: List[Room]) -> List[Dict[str, str]]:
-    """Converts schedule to output-ready format"""
+    """Convert schedule to output format"""
     return [
         {
             "GroupID": group['GroupID'],

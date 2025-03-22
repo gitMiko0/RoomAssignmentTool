@@ -1,22 +1,24 @@
-from typing import TypedDict, Literal, List, Dict, Tuple
+from typing import TypedDict, List, Tuple
 from datetime import datetime
 
 
+
+# ================= Data Structures =================
 class Group(TypedDict):
-    GroupID: str
-    Start: datetime
-    End: datetime
-    Size: str
-    WheelchairAccess: Literal["TRUE", "FALSE"]
-    Projector:        Literal["TRUE", "FALSE"]
-    Computer:         Literal["TRUE", "FALSE"]
-    FloorPreference: str
+    GroupID:            str
+    Start:              datetime
+    End:                datetime
+    Size:               int
+    WheelchairAccess:   bool
+    Projector:          bool
+    Computer:           bool
+    FloorPreference:    int
 
 class Room(TypedDict):
-    RoomID: str
-    Capacity: str
-    WheelchairAccess: Literal["TRUE", "FALSE"]
-    Projector:        Literal["TRUE", "FALSE"]
-    Computer:         Literal["TRUE", "FALSE"]
-    FloorLevel: str
-    Schedule: List[Tuple[datetime, datetime, Group]]
+    RoomID:             str
+    Capacity:           int
+    WheelchairAccess:   bool
+    Projector:          bool
+    Computer:           bool
+    FloorLevel:         int
+    Schedule:           List[Tuple[datetime, datetime, Group]]

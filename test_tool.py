@@ -5,36 +5,33 @@ from solver import (
     check_wheelchair_access, check_equipment, check_time_overlap, preprocess_data
 )
 
-# Functions to easily create sample test data
-def bool_to_str(value: bool) -> str:
-    return "TRUE" if value else "FALSE"
-
+# Directly create properly typed test data
 def sample_group(start, end, size=5, wheelchair=False, projector=False, computer=False, 
-                floor=-1, date="2023-01-01", group_id="G1"):
+                floor=-1, date_str="2023-01-01", group_id="G1"):
+    date = datetime.strptime(date_str, "%Y-%m-%d").date()
     return {
-        "GroupID":          group_id, 
-        "Start":            datetime.strptime(f"{date} {start}", "%Y-%m-%d %H:%M"),
-        "End":              datetime.strptime(f"{date} {end}", "%Y-%m-%d %H:%M"),
-        "Size":             str(size),
-        "WheelchairAccess": bool_to_str(wheelchair),
-        "Projector":        bool_to_str(projector),
-        "Computer":         bool_to_str(computer),
-        "FloorPreference":  str(floor)
+        "GroupID": group_id,
+        "Start": datetime.combine(date, datetime.strptime(start, "%H:%M").time()),
+        "End": datetime.combine(date, datetime.strptime(end, "%H:%M").time()),
+        "Size": size,
+        "WheelchairAccess": wheelchair,
+        "Projector": projector,
+        "Computer": computer,
+        "FloorPreference": floor
     }
-
 
 def sample_room(room_id="R1", capacity=10, wheelchair=True, projector=True, computer=True, floor=1):
     return {
-        "RoomID":            room_id,
-        "Capacity":          str(capacity),
-        "WheelchairAccess":  bool_to_str(wheelchair), # to preserve string Format from CSV as functions expect
-        "Projector":         bool_to_str(projector),
-        "Computer":          bool_to_str(computer),
-        "FloorLevel":        str(floor),
-        "Schedule":          []
+        "RoomID": room_id,
+        "Capacity": capacity,
+        "WheelchairAccess": wheelchair,
+        "Projector": projector,
+        "Computer": computer,
+        "FloorLevel": floor,
+        "Schedule": []
     }
 
-# Unit tests for constraint functions
+# Unit tests with proper type handling
 def test_check_floor_preference():
     assert check_floor_preference(sample_group("10:00", "11:00", floor=-1), sample_room(floor=2)) is True
     assert check_floor_preference(sample_group("10:00", "11:00", floor=2), sample_room(floor=2)) is True
@@ -54,37 +51,32 @@ def test_check_equipment():
     assert check_equipment(sample_group("10:00", "11:00", projector=True, computer=False), sample_room(projector=False, computer=True)) is False
 
 def test_check_time_overlap():
-    global TIME_GAP
-    TIME_GAP = 10  # Ensure global variable is set
-
-    # Create room with existing booking
     room = sample_room()
-    room['Schedule'] = [(datetime(2023, 1, 1, 10, 0), datetime(2023, 1, 1, 11, 0), None)]
-
-    # Valid cases
-    assert check_time_overlap(sample_group("11:10", "12:00"), room) is True
-    assert check_time_overlap(sample_group("08:10", "09:50"), room) is True
     
-    # Invalid cases
-    assert check_time_overlap(sample_group("10:30", "11:30"), room) is False
-    assert check_time_overlap(sample_group("11:00", "12:00"), room) is False
-    assert check_time_overlap(sample_group("10:15", "10:45"), room) is False
-    assert check_time_overlap(sample_group("09:50", "11:10"), room) is False
+    # Add existing booking (10:00-11:00)
+    existing_group = sample_group("10:00", "11:00")
+    room['Schedule'] = [(existing_group['Start'], existing_group['End'], existing_group)]
+
+    # Valid cases (no overlap with buffer)
+    assert check_time_overlap(sample_group("11:10", "12:00"), room) is True  # Exactly at buffer boundary
+    assert check_time_overlap(sample_group("08:10", "09:50"), room) is True   # Before buffer zone
+    
+    # Invalid cases (overlaps with buffer)
+    assert check_time_overlap(sample_group("10:30", "11:30"), room) is False  # Direct overlap
+    assert check_time_overlap(sample_group("11:00", "12:00"), room) is False  # Adjacent with buffer
+    assert check_time_overlap(sample_group("10:15", "10:45"), room) is False  # Inside original time
+    assert check_time_overlap(sample_group("09:50", "11:10"), room) is False  # Wraps buffered time
+
 
 def test_is_valid_assignment():
-    # Test valid assignment
     room = sample_room()
-    room['Schedule'] = []
     assert is_valid_assignment(sample_group("10:00", "11:00"), room) is True
-    
-    # Test capacity constraint
     assert is_valid_assignment(sample_group("10:00", "11:00", size=15), sample_room(capacity=10)) is False
 
 def test_backtrack_simple_case():
     groups = [sample_group("10:00", "11:00")]
     rooms = [sample_room()]
-    processed_groups, sorted_rooms = preprocess_data(groups, rooms)
-    result = assign_groups(processed_groups, sorted_rooms)
+    result = assign_groups(groups, rooms)
     assert len(result) == 1
     assert result[0]["RoomID"] == "R1"
 
@@ -93,12 +85,9 @@ def test_backtrack_conflict():
         sample_group("10:00", "11:00", size=5, wheelchair=False, projector=False, computer=False, floor=1),
         sample_group("11:00", "12:20", size=5, wheelchair=False, projector=False, computer=False, floor=1)
     ]
-    rooms = [sample_room(room_id="R1", capacity=10, wheelchair=True, projector=True, computer=True, floor=1)]
-    
-    processed_groups, sorted_rooms = preprocess_data(groups, rooms)
-    result = assign_groups(processed_groups, sorted_rooms)
-    
-    assert len(result) == 0 # none are assigned due to overlap, there is no valid solution for this input.
+    rooms = [sample_room(capacity=10, floor=1)]
+    result = assign_groups(groups, rooms)
+    assert len(result) == 0
 
 def test_backtrack_multiple_rooms():
     groups = [
@@ -106,16 +95,12 @@ def test_backtrack_multiple_rooms():
         sample_group("10:30", "11:30", size=5, wheelchair=True, projector=True, computer=True, floor=1)
     ]
     rooms = [
-        sample_room(room_id="R1", capacity=10, wheelchair=True, projector=True, computer=True, floor=1),
-        sample_room(room_id="R2", capacity=10, wheelchair=True, projector=True, computer=True, floor=1)
+        sample_room(room_id="R1", floor=1),
+        sample_room(room_id="R2", floor=1)
     ]
-    
-    processed_groups, sorted_rooms = preprocess_data(groups, rooms)
-    result = assign_groups(processed_groups, sorted_rooms)
-    
-    assert len(result) == 2  # Both groups should be assigned (but in different rooms due to time overlap)
-    assigned_rooms = {r["RoomID"] for r in result}
-    assert "R1" in assigned_rooms and "R2" in assigned_rooms  # Ensure different rooms are used
+    result = assign_groups(groups, rooms)
+    assert len(result) == 2
+    assert {r["RoomID"] for r in result} == {"R1", "R2"}
 
 if __name__ == "__main__":
     pytest.main()
