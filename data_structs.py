@@ -1,8 +1,6 @@
 from typing import TypedDict, List, Tuple
 from datetime import datetime
 
-
-
 # ================= Data Structures =================
 class Group(TypedDict):
     GroupID:            str

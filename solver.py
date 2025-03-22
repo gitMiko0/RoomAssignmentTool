@@ -1,7 +1,10 @@
 from typing import TypedDict, List, Dict, Tuple
 from datetime import datetime, timedelta
 from data_structs import Group, Room
-TIME_GAP = 10  # In minutes. Valid schedules must have this minimum gap.
+
+TIME_GAP = 10 
+# In minutes. Valid schedules must have this minimum gap.
+# The tool does NOT modify existing schedule requests, the input is expected to consider this gap in order to be valid.
 
 # ================= Core Logic =================
 def preprocess_data(
@@ -15,6 +18,8 @@ def preprocess_data(
     for rg in raw_groups:
         group: Group = {
             'GroupID':              rg['GroupID'],
+            # Datetime Object conversion -> datetime.strptime("2023-03-21 10:00", "%Y-%m-%d %H:%M")
+            # Returns: datetime.datetime(2023, 3, 21, 10, 0)
             'Start':                datetime.strptime(rg['Start'], "%Y-%m-%d %H:%M"),
             'End':                  datetime.strptime(rg['End'], "%Y-%m-%d %H:%M"),
             'Size':                 int(rg['Size']),
@@ -34,6 +39,7 @@ def preprocess_data(
             'Projector': rr['Projector'].upper() == 'TRUE',
             'Computer': rr['Computer'].upper() == 'TRUE',
             'FloorLevel': int(rr['FloorLevel']),
+            # Schedule is filled in the main algorithm as it assigns groups
             'Schedule': []
         }
         rooms.append(room)
