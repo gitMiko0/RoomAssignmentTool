@@ -1,13 +1,23 @@
 import csv
 
-def write_output(filename=None, assignments=[]):
-    """Writes the room assignment results to a CSV file or prints to the terminal."""
+def write_output(filename=None, assignments=None):
+    output = []
+    for room in assignments:
+        for start, end, group in room.schedule:
+            output.append({
+                'GroupID': group.id,
+                'RoomID': room.id,
+                'Start': start,
+                'End': end
+            })
+
     if filename:
-        with open(filename, mode='w', newline='', encoding='utf-8') as csvfile:
-            fieldnames = ['GroupID', 'RoomID', 'Start', 'End']
-            writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+        with open(filename, mode='w', newline='') as file:
+            writer = csv.DictWriter(file, fieldnames=['GroupID', 'RoomID', 'Start', 'End'])
             writer.writeheader()
-            writer.writerows(assignments)
+            writer.writerows(output)
+        print(f"\nAssignments written to '{filename}'")
     else:
-        for assignment in assignments:
+        print("\nAssignments:")
+        for assignment in output:
             print(f"{assignment['GroupID']} --> {assignment['RoomID']} : {assignment['Start']} - {assignment['End']}")

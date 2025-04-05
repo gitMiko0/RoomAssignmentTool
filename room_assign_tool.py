@@ -1,20 +1,16 @@
-import sys
-from input_reader import read_csv, load_input_data
+from input_reader import load_input_data
 from solver import assign_groups, preprocess_data
 from output_writer import write_output
 
-# To use this tool, in the terminal, input python room_assign_tool.py <dir of roomsInput.csv>  <dir of groupsInput.csv> in the terminal (while in the project directory)
 def main():
-    rooms, groups = load_input_data()
-    groups, rooms = preprocess_data(groups, rooms) # sorts groups by capacity request (asc), and converts string times to datetime objects if necessary
-    assignments = assign_groups(groups, rooms)
+    rooms_raw, groups_raw, time_gap = load_input_data()
+    groups, rooms = preprocess_data(groups_raw, rooms_raw)
+    assignments = assign_groups(groups, rooms, time_gap)
 
-    if assignments:     # Solution found
-        print("\nAssignments:")
-        write_output(filename=None, assignments=assignments)    # Print to terminal
-        write_output("assignments.csv", assignments)            # Save to file
-        print("Assignments saved to assignments.csv")
-    else:               # No solution found for given input
+    if assignments:
+        write_output(filename=None, assignments=assignments) # Print to console
+        write_output("assignments.csv", assignments) # Save to file
+    else:
         print("Error: Constraints cannot be satisfied with the provided input.")
 
 if __name__ == "__main__":
