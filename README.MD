@@ -34,7 +34,7 @@ Sample fields:
 From the terminal, run:
 
 ```bash
-python room_assign_tool.py <rooms_file> <groups_file> [--gap MINUTES]
+python -m src.room_assign_tool <rooms_file.csv> <groups_file.csv> <time_gap>
 ```
 ## How to run the tests?
 ```bash
@@ -53,7 +53,7 @@ Please find the executable in /dist/room_assign_tool.exe
 Once you have the executable (`room_assign_tool.exe`), run it similarly via Command Prompt:
 
 ```bash
-RoomAssignTool.exe <rooms_file.csv> <groups_file.csv> --gap <minutes> [--output output_file.csv]
+room_assign_tool.exe <rooms_file.csv> <groups_file.csv> --gap <minutes> [--output output_file.csv]
 ```
 Ensure that you are on the directory where the executable is located!
 

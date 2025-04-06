@@ -1,3 +1,9 @@
+'''
+ID Block
+Group Member(s): Miko Bengo
+Course: COMP 3649 - Programming Paradigms
+Instructor: Marc Schroeder
+'''
 from .input_reader import load_input_data
 from .solver import assign_groups, preprocess_data
 from .output_writer import write_output
