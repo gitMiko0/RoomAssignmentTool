@@ -1,21 +1,25 @@
-'''
+"""
+Module Name: room_assign_tool.py
+Project Name: Room Assignment Tool (Imperative Solution)
+File Purpose: Entry point for CLI execution. Handles top-level orchestration of reading input, solving, and output.
+
 ID Block
 Group Member(s): Miko Bengo
 Course: COMP 3649 - Programming Paradigms
 Instructor: Marc Schroeder
-'''
-from .input_reader import load_input_data
-from .solver import assign_groups, preprocess_data
+"""
+
+from .input_reader import load_and_prepare_input
+from .solver import assign_groups
 from .output_writer import write_output
 
 def main():
-    rooms_raw, groups_raw, time_gap = load_input_data()
-    groups, rooms = preprocess_data(groups_raw, rooms_raw)
-    assignments = assign_groups(groups, rooms, time_gap)
+    groups, rooms, time_gap = load_and_prepare_input()
+    result = assign_groups(groups, rooms, time_gap)
 
-    if assignments:
-        write_output(filename=None, assignments=assignments) # Print to console
-        write_output("assignments.csv", assignments) # Save to file
+    if result:
+        write_output(None, result)              # to terminal
+        write_output("assignments.csv", result) # to file
     else:
         print("Error: Constraints cannot be satisfied with the provided input.")
 

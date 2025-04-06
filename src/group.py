@@ -72,26 +72,3 @@ class Group:
 
     @property
     def floor_preference(self): return self._floor_preference
-
-    @staticmethod
-    def from_dict(data: dict) -> 'Group':
-        """
-        from_dict
-            Converts a dictionary representation of a group (e.g., from CSV) into a Group object.
-
-        Parameters:
-            data (dict) – raw group data with fields: GroupID, Start, End, Size, etc.
-
-        Return Value:
-            Group – the constructed Group object
-        """
-        return Group(
-            _group_id=data['GroupID'],
-            _start=datetime.strptime(data['Start'], "%Y-%m-%d %H:%M"),
-            _end=datetime.strptime(data['End'], "%Y-%m-%d %H:%M"),
-            _size=int(data['Size']),
-            _wheelchair_access=data['WheelchairAccess'].upper() == 'TRUE',
-            _projector=data['Projector'].upper() == 'TRUE',
-            _computer=data['Computer'].upper() == 'TRUE',
-            _floor_preference=int(data['FloorPreference'])
-        )

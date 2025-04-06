@@ -105,24 +105,3 @@ class Room:
             Empties the entire room schedule.
         """
         self._schedule.clear()
-
-    @staticmethod
-    def from_dict(data: dict) -> 'Room':
-        """
-        from_dict
-            Converts a dictionary representation of a room (e.g., from CSV) into a Room object.
-
-        Parameters:
-            data (dict) - raw room data with fields: RoomID, Capacity, WheelchairAccess, Projector, Computer, FloorLevel
-
-        Return Value:
-            Room - the constructed Room object
-        """
-        return Room(
-            _room_id=data['RoomID'],
-            _capacity=int(data['Capacity']),
-            _wheelchair_access=data['WheelchairAccess'].upper() == 'TRUE',
-            _projector=data['Projector'].upper() == 'TRUE',
-            _computer=data['Computer'].upper() == 'TRUE',
-            _floor_level=int(data['FloorLevel'])
-        )

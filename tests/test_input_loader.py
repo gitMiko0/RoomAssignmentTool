@@ -1,7 +1,9 @@
 """
 Module Name: test_input_loader.py
 Project Name: Room Assignment Tool (Imperative Solution)
-File Purpose: Unit tests for parsing and preprocessing CSV input into proper Group and Room objects.
+File Purpose:
+    Unit tests for parsing and preprocessing CSV input into proper Group and Room objects.
+    Includes validation of successful parsing and graceful error handling of malformed input.
 """
 
 import unittest
@@ -40,6 +42,55 @@ class TestInputLoader(unittest.TestCase):
         self.assertEqual(r1.id, "R101")
         self.assertEqual(r1.capacity, 25)
         self.assertEqual(r1.floor_level, 1)
+
+    def test_invalid_integer_field_raises(self):
+        raw_groups = [{
+            "GroupID": "G_BAD",
+            "Size": "NaN",
+            "WheelchairAccess": "TRUE",
+            "Projector": "FALSE",
+            "Computer": "FALSE",
+            "FloorPreference": "1",
+            "Start": "2025-02-07 08:00",
+            "End": "2025-02-07 09:00"
+        }]
+        raw_rooms = read_csv(self.rooms_path)
+        with self.assertRaises(ValueError) as cm:
+            preprocess_data(raw_groups, raw_rooms)
+        self.assertIn("Invalid integer 'NaN'", str(cm.exception))
+
+    def test_invalid_boolean_field_raises(self):
+        raw_groups = [{
+            "GroupID": "G_BAD",
+            "Size": "30",
+            "WheelchairAccess": "Definitely",
+            "Projector": "FALSE",
+            "Computer": "FALSE",
+            "FloorPreference": "1",
+            "Start": "2025-02-07 08:00",
+            "End": "2025-02-07 09:00"
+        }]
+        raw_rooms = read_csv(self.rooms_path)
+        with self.assertRaises(ValueError) as cm:
+            preprocess_data(raw_groups, raw_rooms)
+        self.assertIn("Invalid boolean value 'Definitely'", str(cm.exception)) # check is exception is detected and correct
+
+    def test_invalid_time_field_raises(self):
+        raw_groups = [{
+            "GroupID": "G_BAD",
+            "Size": "30",
+            "WheelchairAccess": "TRUE",
+            "Projector": "FALSE",
+            "Computer": "FALSE",
+            "FloorPreference": "1",
+            "Start": "tomorrow morning",
+            "End": "2025-02-07 09:00"
+        }]
+        raw_rooms = read_csv(self.rooms_path)
+        with self.assertRaises(ValueError) as cm:
+            preprocess_data(raw_groups, raw_rooms)
+        self.assertIn("Invalid datetime 'tomorrow morning'", str(cm.exception))
+
 
 if __name__ == "__main__":
     unittest.main()
