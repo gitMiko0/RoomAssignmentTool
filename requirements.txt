@@ -1,0 +1,7 @@
+# This tool doesn't require anything with regards to the algorithm, but testing and creating an executable uses the following libraries:
+# Testing Frameworks
+pytest>=8.0.0
+coverage>=7.0.0
+
+# Executable Framework
+pyinstaller>=6.0.0
