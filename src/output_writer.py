@@ -8,9 +8,6 @@ Module Summary:
 - Converts finalized room-group assignments into output-ready dictionaries.
 - Writes formatted assignment data to either a CSV file or standard output.
 
-Key Functions:
-- write_output
-
 Dependencies:
 - csv module for file output
 - Room and Group object access patterns

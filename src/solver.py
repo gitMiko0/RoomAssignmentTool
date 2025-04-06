@@ -28,23 +28,6 @@ Known/Suspected Errors:
 - Does not currently optimize for room utilization (greedy approach).
 """
 
-def preprocess_data(raw_groups: List[Dict], raw_rooms: List[Dict]) -> tuple[list[Group], list[Room]]:
-    """
-    preprocess_data
-        Converts input dictionaries into structured Group and Room objects. 
-        Also sorts them to improve backtracking efficiency.
-
-    Parameters:
-        raw_groups (List[Dict]) - List of raw group dictionaries from CSV or manual entry
-        raw_rooms (List[Dict]) - List of raw room dictionaries from CSV or manual entry
-
-    Return Values:
-        tuple[list[Group], list[Room]] - Sorted list of Group objects and Room objects
-    """
-    groups = sorted([Group.from_dict(g) for g in raw_groups], key=lambda g: (g.start, -g.size))
-    rooms = sorted([Room.from_dict(r) for r in raw_rooms], key=lambda r: r.capacity)
-    return groups, rooms
-
 def assign_groups(groups: List[Group], rooms: List[Room], time_gap: int, index: int = 0) -> Optional[List[Room]]:
     """
     assign_groups

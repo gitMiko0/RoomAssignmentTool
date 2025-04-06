@@ -109,3 +109,4 @@ def check_equipment(group: Group, room: Room) -> bool:
     """
     return (not group.projector or room.projector) and \
            (not group.computer or room.computer)
+
