@@ -15,7 +15,7 @@
 
 <div class="node">
   <a name="pyi_rth_inspect.py"></a>
-  <a target="code" href="///C:/Users/Miko/AppData/Local/Packages/PythonSoftwareFoundation.Python.3.11_qbz5n2kfra8p0/LocalCache/local-packages/Python311/site-packages/PyInstaller/hooks/rthooks/pyi_rth_inspect.py" type="text/plain"><tt>pyi_rth_inspect.py</tt></a>
+  <a target="code" href="///C:/Users/Miko/OneDrive/Desktop/RoomAssignmentTool/.venv/Lib/site-packages/PyInstaller/hooks/rthooks/pyi_rth_inspect.py" type="text/plain"><tt>pyi_rth_inspect.py</tt></a>
 <span class="moduletype">Script</span>  <div class="import">
 imports:
     <a href="#inspect">inspect</a>
@@ -192,7 +192,6 @@ imports:
  &#8226;   <a href="#sre_constants">sre_constants</a>
  &#8226;   <a href="#sre_parse">sre_parse</a>
  &#8226;   <a href="#stat">stat</a>
- &#8226;   <a href="#sys">sys</a>
  &#8226;   <a href="#traceback">traceback</a>
  &#8226;   <a href="#types">types</a>
  &#8226;   <a href="#warnings">warnings</a>
@@ -207,7 +206,7 @@ imports:
   <a target="code" href="" type="text/plain"><tt>'org.python'</tt></a>
 <span class="moduletype">MissingModule</span>  <div class="import">
 imported by:
-    <a href="#copy">copy</a>
+    <a href="#pickle">pickle</a>
 
   </div>
 
@@ -1414,6 +1413,24 @@ imported by:
 </div>
 
 <div class="node">
+  <a name="constraints"></a>
+  <a target="code" href="///C:/Users/Miko/OneDrive/Desktop/RoomAssignmentTool/constraints.py" type="text/plain"><tt>constraints</tt></a>
+<span class="moduletype">SourceModule</span>  <div class="import">
+imports:
+    <a href="#datetime">datetime</a>
+ &#8226;   <a href="#group">group</a>
+ &#8226;   <a href="#room">room</a>
+
+  </div>
+  <div class="import">
+imported by:
+    <a href="#solver">solver</a>
+
+  </div>
+
+</div>
+
+<div class="node">
   <a name="contextlib"></a>
   <a target="code" href="///C:/Program%20Files/WindowsApps/PythonSoftwareFoundation.Python.3.11_3.11.2544.0_x64__qbz5n2kfra8p0/Lib/contextlib.py" type="text/plain"><tt>contextlib</tt></a>
 <span class="moduletype">SourceModule</span>  <div class="import">
@@ -1465,8 +1482,8 @@ imported by:
   <a target="code" href="///C:/Program%20Files/WindowsApps/PythonSoftwareFoundation.Python.3.11_3.11.2544.0_x64__qbz5n2kfra8p0/Lib/copy.py" type="text/plain"><tt>copy</tt></a>
 <span class="moduletype">SourceModule</span>  <div class="import">
 imports:
-    <a href="#'org.python'">'org.python'</a>
- &#8226;   <a href="#copyreg">copyreg</a>
+    <a href="#copyreg">copyreg</a>
+ &#8226;   <a href="#org">org</a>
  &#8226;   <a href="#types">types</a>
  &#8226;   <a href="#weakref">weakref</a>
 
@@ -1528,23 +1545,6 @@ imported by:
 </div>
 
 <div class="node">
-  <a name="data_structs"></a>
-  <a target="code" href="///C:/Users/Miko/OneDrive/Desktop/RoomAssignmentTool/data_structs.py" type="text/plain"><tt>data_structs</tt></a>
-<span class="moduletype">SourceModule</span>  <div class="import">
-imports:
-    <a href="#datetime">datetime</a>
- &#8226;   <a href="#typing">typing</a>
-
-  </div>
-  <div class="import">
-imported by:
-    <a href="#solver">solver</a>
-
-  </div>
-
-</div>
-
-<div class="node">
   <a name="dataclasses"></a>
   <a target="code" href="///C:/Program%20Files/WindowsApps/PythonSoftwareFoundation.Python.3.11_3.11.2544.0_x64__qbz5n2kfra8p0/Lib/dataclasses.py" type="text/plain"><tt>dataclasses</tt></a>
 <span class="moduletype">SourceModule</span>  <div class="import">
@@ -1564,7 +1564,9 @@ imports:
   </div>
   <div class="import">
 imported by:
-    <a href="#pprint">pprint</a>
+    <a href="#group">group</a>
+ &#8226;   <a href="#pprint">pprint</a>
+ &#8226;   <a href="#room">room</a>
 
   </div>
 
@@ -1587,8 +1589,10 @@ imports:
 imported by:
     <a href="#_strptime">_strptime</a>
  &#8226;   <a href="#calendar">calendar</a>
- &#8226;   <a href="#data_structs">data_structs</a>
+ &#8226;   <a href="#constraints">constraints</a>
  &#8226;   <a href="#email.utils">email.utils</a>
+ &#8226;   <a href="#group">group</a>
+ &#8226;   <a href="#room">room</a>
  &#8226;   <a href="#solver">solver</a>
 
   </div>
@@ -4831,6 +4835,25 @@ imported by:
 </div>
 
 <div class="node">
+  <a name="group"></a>
+  <a target="code" href="///C:/Users/Miko/OneDrive/Desktop/RoomAssignmentTool/group.py" type="text/plain"><tt>group</tt></a>
+<span class="moduletype">SourceModule</span>  <div class="import">
+imports:
+    <a href="#dataclasses">dataclasses</a>
+ &#8226;   <a href="#datetime">datetime</a>
+
+  </div>
+  <div class="import">
+imported by:
+    <a href="#constraints">constraints</a>
+ &#8226;   <a href="#room">room</a>
+ &#8226;   <a href="#solver">solver</a>
+
+  </div>
+
+</div>
+
+<div class="node">
   <a name="grp"></a>
   <a target="code" href="" type="text/plain"><tt>grp</tt></a>
 <span class="moduletype">MissingModule</span>  <div class="import">
@@ -4922,6 +4945,7 @@ imports:
  &#8226;   <a href="#importlib">importlib</a>
  &#8226;   <a href="#importlib._bootstrap">importlib._bootstrap</a>
  &#8226;   <a href="#importlib._bootstrap_external">importlib._bootstrap_external</a>
+ &#8226;   <a href="#importlib.machinery">importlib.machinery</a>
  &#8226;   <a href="#sys">sys</a>
  &#8226;   <a href="#warnings">warnings</a>
 
@@ -5052,7 +5076,8 @@ imports:
   </div>
   <div class="import">
 imported by:
-    <a href="#importlib.abc">importlib.abc</a>
+    <a href="#importlib">importlib</a>
+ &#8226;   <a href="#importlib.abc">importlib.abc</a>
  &#8226;   <a href="#inspect">inspect</a>
  &#8226;   <a href="#py_compile">py_compile</a>
 
@@ -5823,7 +5848,7 @@ imported by:
   <a target="code" href="" type="text/plain"><tt>org</tt></a>
 <span class="moduletype">MissingModule</span>  <div class="import">
 imported by:
-    <a href="#pickle">pickle</a>
+    <a href="#copy">copy</a>
 
   </div>
 
@@ -5963,14 +5988,14 @@ imported by:
   <a target="code" href="///C:/Program%20Files/WindowsApps/PythonSoftwareFoundation.Python.3.11_3.11.2544.0_x64__qbz5n2kfra8p0/Lib/pickle.py" type="text/plain"><tt>pickle</tt></a>
 <span class="moduletype">SourceModule</span>  <div class="import">
 imports:
-    <a href="#_compat_pickle">_compat_pickle</a>
+    <a href="#'org.python'">'org.python'</a>
+ &#8226;   <a href="#_compat_pickle">_compat_pickle</a>
  &#8226;   <a href="#_pickle">_pickle</a>
  &#8226;   <a href="#codecs">codecs</a>
  &#8226;   <a href="#copyreg">copyreg</a>
  &#8226;   <a href="#functools">functools</a>
  &#8226;   <a href="#io">io</a>
  &#8226;   <a href="#itertools">itertools</a>
- &#8226;   <a href="#org">org</a>
  &#8226;   <a href="#pprint">pprint</a>
  &#8226;   <a href="#re">re</a>
  &#8226;   <a href="#struct">struct</a>
@@ -6329,6 +6354,26 @@ imported by:
 </div>
 
 <div class="node">
+  <a name="room"></a>
+  <a target="code" href="///C:/Users/Miko/OneDrive/Desktop/RoomAssignmentTool/room.py" type="text/plain"><tt>room</tt></a>
+<span class="moduletype">SourceModule</span>  <div class="import">
+imports:
+    <a href="#dataclasses">dataclasses</a>
+ &#8226;   <a href="#datetime">datetime</a>
+ &#8226;   <a href="#group">group</a>
+ &#8226;   <a href="#typing">typing</a>
+
+  </div>
+  <div class="import">
+imported by:
+    <a href="#constraints">constraints</a>
+ &#8226;   <a href="#solver">solver</a>
+
+  </div>
+
+</div>
+
+<div class="node">
   <a name="select"></a>
   <tt>select</tt> <span class="moduletype"><tt>C:\Program Files\WindowsApps\PythonSoftwareFoundation.Python.3.11_3.11.2544.0_x64__qbz5n2kfra8p0\DLLs\select.pyd</tt></span>  <div class="import">
 imported by:
@@ -6439,8 +6484,10 @@ imported by:
   <a target="code" href="///C:/Users/Miko/OneDrive/Desktop/RoomAssignmentTool/solver.py" type="text/plain"><tt>solver</tt></a>
 <span class="moduletype">SourceModule</span>  <div class="import">
 imports:
-    <a href="#data_structs">data_structs</a>
+    <a href="#constraints">constraints</a>
  &#8226;   <a href="#datetime">datetime</a>
+ &#8226;   <a href="#group">group</a>
+ &#8226;   <a href="#room">room</a>
  &#8226;   <a href="#typing">typing</a>
 
   </div>
@@ -6701,7 +6748,6 @@ imported by:
  &#8226;   <a href="#pyi_rth_inspect.py">pyi_rth_inspect.py</a>
  &#8226;   <a href="#quopri">quopri</a>
  &#8226;   <a href="#re._compiler">re._compiler</a>
- &#8226;   <a href="#room_assign_tool.py">room_assign_tool.py</a>
  &#8226;   <a href="#selectors">selectors</a>
  &#8226;   <a href="#shutil">shutil</a>
  &#8226;   <a href="#socket">socket</a>
@@ -7009,14 +7055,14 @@ imports:
   </div>
   <div class="import">
 imported by:
-    <a href="#data_structs">data_structs</a>
- &#8226;   <a href="#functools">functools</a>
+    <a href="#functools">functools</a>
  &#8226;   <a href="#importlib.metadata">importlib.metadata</a>
  &#8226;   <a href="#importlib.metadata._meta">importlib.metadata._meta</a>
  &#8226;   <a href="#importlib.resources._common">importlib.resources._common</a>
  &#8226;   <a href="#importlib.resources._itertools">importlib.resources._itertools</a>
  &#8226;   <a href="#importlib.resources._legacy">importlib.resources._legacy</a>
  &#8226;   <a href="#importlib.resources.abc">importlib.resources.abc</a>
+ &#8226;   <a href="#room">room</a>
  &#8226;   <a href="#solver">solver</a>
 
   </div>

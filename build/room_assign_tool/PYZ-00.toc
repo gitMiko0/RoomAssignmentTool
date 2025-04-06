@@ -47,6 +47,9 @@
    'C:\\Program '
    'Files\\WindowsApps\\PythonSoftwareFoundation.Python.3.11_3.11.2544.0_x64__qbz5n2kfra8p0\\Lib\\calendar.py',
    'PYMODULE'),
+  ('constraints',
+   'C:\\Users\\Miko\\OneDrive\\Desktop\\RoomAssignmentTool\\constraints.py',
+   'PYMODULE'),
   ('contextlib',
    'C:\\Program '
    'Files\\WindowsApps\\PythonSoftwareFoundation.Python.3.11_3.11.2544.0_x64__qbz5n2kfra8p0\\Lib\\contextlib.py',
@@ -62,9 +65,6 @@
   ('csv',
    'C:\\Program '
    'Files\\WindowsApps\\PythonSoftwareFoundation.Python.3.11_3.11.2544.0_x64__qbz5n2kfra8p0\\Lib\\csv.py',
-   'PYMODULE'),
-  ('data_structs',
-   'C:\\Users\\Miko\\OneDrive\\Desktop\\RoomAssignmentTool\\data_structs.py',
    'PYMODULE'),
   ('dataclasses',
    'C:\\Program '
@@ -177,6 +177,9 @@
   ('gettext',
    'C:\\Program '
    'Files\\WindowsApps\\PythonSoftwareFoundation.Python.3.11_3.11.2544.0_x64__qbz5n2kfra8p0\\Lib\\gettext.py',
+   'PYMODULE'),
+  ('group',
+   'C:\\Users\\Miko\\OneDrive\\Desktop\\RoomAssignmentTool\\group.py',
    'PYMODULE'),
   ('gzip',
    'C:\\Program '
@@ -327,6 +330,9 @@
   ('random',
    'C:\\Program '
    'Files\\WindowsApps\\PythonSoftwareFoundation.Python.3.11_3.11.2544.0_x64__qbz5n2kfra8p0\\Lib\\random.py',
+   'PYMODULE'),
+  ('room',
+   'C:\\Users\\Miko\\OneDrive\\Desktop\\RoomAssignmentTool\\room.py',
    'PYMODULE'),
   ('selectors',
    'C:\\Program '
