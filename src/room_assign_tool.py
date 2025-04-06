@@ -1,6 +1,6 @@
-from input_reader import load_input_data
-from solver import assign_groups, preprocess_data
-from output_writer import write_output
+from .input_reader import load_input_data
+from .solver import assign_groups, preprocess_data
+from .output_writer import write_output
 
 def main():
     rooms_raw, groups_raw, time_gap = load_input_data()

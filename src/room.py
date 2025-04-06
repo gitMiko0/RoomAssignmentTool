@@ -1,7 +1,7 @@
 from dataclasses import dataclass, field
 from datetime import datetime
 from typing import List, Tuple
-from group import Group
+from .group import Group
 
 @dataclass
 class Room:

@@ -1,7 +1,7 @@
 # constraints.py
 from datetime import timedelta
-from group import Group
-from room import Room
+from .group import Group
+from .room import Room
 
 def is_valid_assignment(group: Group, room: Room, time_gap: int) -> bool:
     """Composite check to ensure the room can host the group."""

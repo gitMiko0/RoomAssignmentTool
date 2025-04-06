@@ -1,17 +1,12 @@
 import pytest
 from datetime import datetime
-from solver import assign_groups, is_valid_assignment
-from constraints import (
+from src.solver import assign_groups, is_valid_assignment
+from src.constraints import (
     check_floor_preference, check_room_capacity, check_wheelchair_access,
     check_equipment, check_time_overlap
 )
-from room import Room
-from group import Group
-
-# === Helper functions to generate objects ===
-from datetime import datetime
-from group import Group
-from room import Room
+from src.room import Room
+from src.group import Group
 
 def sample_group(
     start: str,

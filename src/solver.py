@@ -1,7 +1,7 @@
 from typing import List, Dict, Optional
-from group import Group
-from room import Room
-from constraints import is_valid_assignment
+from .group import Group
+from .room import Room
+from .constraints import is_valid_assignment
 from datetime import datetime
 
 def preprocess_data(raw_groups: List[Dict], raw_rooms: List[Dict]) -> tuple[list[Group], list[Room]]:
