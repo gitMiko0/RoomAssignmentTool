@@ -47,10 +47,7 @@ python -m coverage report
 ## Running the Executable
 
 This tool is also available as a standalone executable — no need to install Python or any dependencies.
-
-### How to Get the Executable
-
-If the executable is not built yet, it can be generated it using [PyInstaller](https://pyinstaller.org/en/stable/) (see below).  
+Please find the executable in /dist/room_assign_tool.exe
 
 ### Running the Executable
 Once you have the executable (`room_assign_tool.exe`), run it similarly via Command Prompt:
@@ -58,3 +55,8 @@ Once you have the executable (`room_assign_tool.exe`), run it similarly via Comm
 ```bash
 RoomAssignTool.exe <rooms_file.csv> <groups_file.csv> --gap <minutes> [--output output_file.csv]
 ```
+Ensure that you are on the directory where the executable is located!
+
+### How to Get the Executable
+
+If the executable is not built yet, it can be generated it using [PyInstaller](https://pyinstaller.org/en/stable/) (see below).  
