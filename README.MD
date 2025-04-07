@@ -59,4 +59,4 @@ Ensure that you are on the directory where the executable is located!
 
 ### How to Get the Executable
 
-If the executable is not built yet, it can be generated it using [PyInstaller](https://pyinstaller.org/en/stable/) (see below).  
+If desired, it can be generated it using [PyInstaller](https://pyinstaller.org/en/stable/). 
