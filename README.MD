@@ -25,6 +25,7 @@ The input must have the following headers:
 - **Group file:** `GroupID,Start,End,Size,WheelchairAccess,Projector,Computer,FloorPreference`
 
 Sample inputs are provided in the input folder (consult groups_50.csv and/or rooms_50.csv as valid samples)
+IDs MUST be UNIQUE
 
 3. Optional: time gap (in minutes)
 In the CLI, the tool can have a third optional input. If this isn't provided it will assume a 10-minutes gap between bookings.
