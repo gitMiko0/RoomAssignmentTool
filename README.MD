@@ -58,6 +58,8 @@ room_assign_tool.exe <rooms_file.csv> <groups_file.csv> --gap <minutes> [--outpu
 ```
 Ensure that you are on the directory where the executable is located!
 
+Note: The testing also has comprehensive, implementation-based, function specific tests with pytest along with coverage reports under the tests folder. Please ignore this.
+
 ### How to Get the Executable
 
 If desired, it can be generated it using [PyInstaller](https://pyinstaller.org/en/stable/). 
