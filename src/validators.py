@@ -86,3 +86,27 @@ def parse_time(val: str, field: str) -> datetime:
         return datetime.strptime(val.strip(), "%Y-%m-%d %H:%M")
     except ValueError:
         raise ValueError(f"Invalid datetime '{val}' in field '{field}' (expected format YYYY-MM-DD HH:MM)")
+
+def check_duplicates(items: list, key_fn, label: str):
+    """
+    check_duplicates
+        Ensures that a list of items has unique keys.
+
+    Parameters:
+        items (list) - A list of items (e.g., Group or Room objects)
+        key_fn (Callable) - A function that extracts the unique ID (e.g., lambda g: g.group_id)
+        label (str) - Label to describe the item type in the error message (e.g., "Group")
+
+    Exceptions:
+        ValueError - If duplicates are found
+    """
+    seen = set()
+    dups = set()
+    for item in items:
+        key = key_fn(item)
+        if key in seen:
+            dups.add(key)
+        seen.add(key)
+
+    if dups:
+        raise ValueError(f"Duplicate {label} IDs found: {sorted(dups)}")

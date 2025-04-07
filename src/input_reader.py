@@ -28,7 +28,7 @@ from datetime import datetime
 from typing import List, Dict
 from .group import Group
 from .room import Room
-from .validators import parse_bool, parse_int, parse_time
+from .validators import parse_bool, parse_int, parse_time, check_duplicates
 
 DEFAULT_TIME_GAP = 10  # in minutes
 
@@ -99,6 +99,9 @@ def preprocess_data(raw_groups: List[Dict], raw_rooms: List[Dict]) -> tuple[list
     """
     groups = [parse_group(row, i) for i, row in enumerate(raw_groups)]
     rooms = [parse_room(row, i) for i, row in enumerate(raw_rooms)]
+
+    check_duplicates(groups, lambda g: g.id, "Group")
+    check_duplicates(rooms, lambda r: r.id, "Room")
 
     groups = sorted(groups, key=lambda g: (g.start, -g.size))
     rooms = sorted(rooms, key=lambda r: r.capacity)
