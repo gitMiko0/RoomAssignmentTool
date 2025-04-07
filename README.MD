@@ -38,9 +38,9 @@ From the terminal, run:
 python -m src.room_assign_tool <rooms_file.csv> <groups_file.csv> <time_gap>
 ```
 ## How to run the tests?
+The test is just an automated powershell script calling the executable and the appropriate files. Run this with:
 ```bash
-python -m coverage run -m pytest ./tests
-python -m coverage report -m
+./black_box_tests.ps1
 ```
 
 ---
