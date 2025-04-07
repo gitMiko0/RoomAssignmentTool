@@ -2,10 +2,10 @@
 
 This tool assigns groups into pre-existing rooms while checking for multiple constraints such as:
 
-- **Computer and projector availability**
-- **Wheelchair accessibility**
-- **Room capacity**
-- **Floor preference** (-1 to indicate no preference)
+- **Computer and projector availability**    TRUE or FALSE
+- **Wheelchair accessibility**               TRUE or FALSE
+- **Room capacity**                          TRUE or FALSE
+- **Floor preference**                       (-1 to indicate no preference)
 - **Time conflicts**, with a user-defined **time gap** (in minutes) between bookings
 
 The tool ensures that no invalid assignments are made. If a solution exists that satisfies all the constraints, it will find it using a backtracking algorithm.
@@ -20,11 +20,12 @@ The tool expects two **comma-separated value (.csv)** files as input:
 1. `rooms.csv` – contains room properties like capacity, equipment, accessibility, and floor level.
 2. `groups.csv` – contains group scheduling info, size, required equipment, accessibility, and floor preferences.
 
-Sample fields:
+The input must have the following headers:
 - **Room file:** `RoomID,Capacity,WheelchairAccess,Projector,Computer,FloorLevel`
 - **Group file:** `GroupID,Start,End,Size,WheelchairAccess,Projector,Computer,FloorPreference`
 
 3. Optional: time gap (in minutes)
+In the CLI, the tool can have a third optional input. If this isn't provided it will assume a 10-minutes gap between bookings.
 
 
 ---
@@ -38,8 +39,8 @@ python -m src.room_assign_tool <rooms_file.csv> <groups_file.csv> <time_gap>
 ```
 ## How to run the tests?
 ```bash
-python -m coverage run -m pytest test_tool.py
-python -m coverage report
+python -m coverage run -m pytest ./tests
+python -m coverage report -m
 ```
 
 ---
@@ -59,4 +60,4 @@ Ensure that you are on the directory where the executable is located!
 
 ### How to Get the Executable
 
-If the executable is not built yet, it can be generated it using [PyInstaller](https://pyinstaller.org/en/stable/) (see below).  
+If desired, it can be generated it using [PyInstaller](https://pyinstaller.org/en/stable/). 
