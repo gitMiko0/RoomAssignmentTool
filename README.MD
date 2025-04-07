@@ -24,6 +24,8 @@ The input must have the following headers:
 - **Room file:** `RoomID,Capacity,WheelchairAccess,Projector,Computer,FloorLevel`
 - **Group file:** `GroupID,Start,End,Size,WheelchairAccess,Projector,Computer,FloorPreference`
 
+Sample inputs are provided in the input folder (consult groups_50.csv and/or rooms_50.csv as valid samples)
+
 3. Optional: time gap (in minutes)
 In the CLI, the tool can have a third optional input. If this isn't provided it will assume a 10-minutes gap between bookings.
 
@@ -38,9 +40,9 @@ From the terminal, run:
 python -m src.room_assign_tool <rooms_file.csv> <groups_file.csv> <time_gap>
 ```
 ## How to run the tests?
+The test is just an automated powershell script calling the executable and the appropriate files. Run this with:
 ```bash
-python -m coverage run -m pytest ./tests
-python -m coverage report -m
+./black_box_tests.ps1
 ```
 
 ---
@@ -57,6 +59,8 @@ Once you have the executable (`room_assign_tool.exe`), run it similarly via Comm
 room_assign_tool.exe <rooms_file.csv> <groups_file.csv> --gap <minutes> [--output output_file.csv]
 ```
 Ensure that you are on the directory where the executable is located!
+
+Note: The testing also has comprehensive, implementation-based, function specific tests with pytest along with coverage reports under the tests folder. Please ignore this.
 
 ### How to Get the Executable
 
