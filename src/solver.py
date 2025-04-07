@@ -28,6 +28,8 @@ Known/Suspected Errors:
 - Does not currently optimize for room utilization (greedy approach).
 """
 
+
+
 def assign_groups(groups: List[Group], rooms: List[Room], time_gap: int, index: int = 0) -> Optional[List[Room]]:
     """
     assign_groups

@@ -51,6 +51,6 @@ def write_output(filename=None, assignments=None):
             writer.writerows(output)
         print(f"\nAssignments written to '{filename}'")
     else:
-        print("\nAssignments:")
-        for assignment in output:
+        print("\nRoom Assignments:")
+        for assignment in sorted(output, key=lambda a: a["GroupID"]):
             print(f"{assignment['GroupID']} --> {assignment['RoomID']} : {assignment['Start']} - {assignment['End']}")
