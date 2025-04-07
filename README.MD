@@ -38,7 +38,7 @@ python -m src.room_assign_tool <rooms_file.csv> <groups_file.csv> <time_gap>
 ```
 ## How to run the tests?
 ```bash
-python -m coverage run -m pytest test_tool.py
+python -m coverage run -m pytest /tests
 python -m coverage report
 ```
 
