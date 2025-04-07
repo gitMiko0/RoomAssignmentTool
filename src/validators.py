@@ -65,7 +65,7 @@ def parse_int(val: str, field: str, min_allowed: int = None) -> int:
             raise ValueError(f"{field} must be >= {min_allowed}, got {i}")
         return i
     except ValueError:
-        raise ValueError(f"Invalid integer '{val}' in field '{field}'")
+        raise ValueError(f"Invalid integer '{val}' in field '{field}' Expected integer <= {min_allowed}")
 
 def parse_time(val: str, field: str) -> datetime:
     """

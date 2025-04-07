@@ -58,7 +58,7 @@ def assign_groups(groups: List[Group], rooms: List[Room], time_gap: int, index: 
             if result is not None:
                 return result
             room.remove_last_booking()
-            print(f"[Backtrack] Removed group {group.id} from room {room.id}")
+            # print(f"[Backtrack] Removed group {group.id} from room {room.id}") -- debugging uncomment if needed
 
     return None  # No valid assignment found for this group
 

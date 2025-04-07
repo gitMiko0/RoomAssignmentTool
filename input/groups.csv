@@ -1,3 +1,0 @@
-GroupID,Size,WheelchairAccess,Projector,Computer,FloorPreference,Start,End
-Group1,40,TRUE,TRUE,FALSE,1,09:00,10:00
-Group2,20,FALSE,FALSE,FALSE,2,09:00,11:00
