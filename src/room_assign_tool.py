@@ -9,9 +9,9 @@ Course: COMP 3649 - Programming Paradigms
 Instructor: Marc Schroeder
 """
 
-from .input_reader import load_and_prepare_input
-from .solver import assign_groups
-from .output_writer import write_output
+from src.input_reader import load_and_prepare_input
+from src.solver import assign_groups
+from src.output_writer import write_output
 
 def main():
     groups, rooms, time_gap = load_and_prepare_input()
