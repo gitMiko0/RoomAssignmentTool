@@ -27,6 +27,7 @@ The input must have the following headers:
 Sample inputs are provided in the input folder (consult groups_50.csv and/or rooms_50.csv as valid samples)
 
 **IDs MUST be UNIQUE**
+
 **Date & Time are in the format: YYYY-MM-DD HH:MM**
 
 3. Optional: time gap (in minutes)
